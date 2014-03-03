@@ -1,45 +1,74 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
-int main(int argc, const char* arfgv[])
-{ 
+std::string CmdLineInputToString(int argc, const char* arfgv[])
+{
 	std::string cmdLineInput;
 
 	for (int i = 1; i < argc; i++)
 	{
-		cmdLineInput += " ";
+		if (i!=1)
+			cmdLineInput += " ";
 		cmdLineInput += arfgv[i];
 	}
 
-	std::cout << "This line was passed as an argument: " << cmdLineInput << "\n";
+	return cmdLineInput;
+}
 
-	short quest_count = 0;
-	for (int i = 0; i < cmdLineInput.size(); ++i)
+short QuestCount1(std::string str)
+{
+	short questCount = 0;
+
+	for (int i = 0; i < str.size(); ++i)
 	{
-		if(cmdLineInput[i] == '?')
-			quest_count++;
+		if(str[i] == '?')
+			questCount++;
 	}
 
-	std::cout << "quest " << quest_count << ";\n";
+	return questCount;
+}
 
-	quest_count = 0;
-	const char* p = cmdLineInput.c_str();
+short QuestCount2(std::string str)
+{
+	short questCount = 0;
+	const char* p = str.c_str();
 	int i = 0;
-	while(i < cmdLineInput.size())
+
+	while(i < str.size())
 	{
 		if (*p == '?')
-			quest_count++;
+			questCount++;
 		p++;
 		i++;
 	}
 
-	std::cout << "quest " << quest_count << ";\n";
+	return questCount;
+}
 
-	quest_count = 0;
-	for (char ch : cmdLineInput)
+short QuestCount3(std::string str)
+{
+	short questCount = 0;
+
+	for (char ch : str)
 	{
 		if (ch == '?')
-			quest_count++;
+			questCount++;
 	}
-	std::cout << "quest " << quest_count << ";\n";
+
+	return questCount;
+}	
+
+int main(int argc, const char* arfgv[])
+{ 
+	std::string cmdLineInput{CmdLineInputToString(argc, arfgv)};
+
+	std::cout << "This line was passed as an argument: " << cmdLineInput << "\n";
+
+	std::vector<short (*)(std::string)> funcVec{&QuestCount1, &QuestCount2, &QuestCount3};
+
+	for (auto func : funcVec)
+	{
+		std::cout << "quest " << (*func)(cmdLineInput) << ";\n";
+	}
 }
