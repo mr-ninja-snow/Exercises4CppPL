@@ -1,7 +1,9 @@
-#include "header.h"
+#include <iostream>	//std::cout, std::cerr
+#include "vlib.hpp"
 
 int main(int argc, const char* arfgv[])
 {
 
-	return 0;
+	return exercise_3::ArgProc(argc, arfgv);
+
 }
