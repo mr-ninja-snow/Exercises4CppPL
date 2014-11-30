@@ -1,16 +1,55 @@
-#include <iostream>	//std::cout, std::cerr
+#include <iostream>		//std::cout, std::cerr
+#include <array>
 #include "vlib.hpp"
+
 
 int main(int argc, const char* arfgv[])
 {
 	enum { eArraySize = 5 };
-	int fooArray[eArraySize] { 4, 3, 2, 1, 5};
+	std::array<int, eArraySize> fooArray { 4, 3, 2, 1, 5};
 
-	exercise_7::printIntArrayWithMsg(fooArray, eArraySize, "\nBefore sorting:\n\t");
+	float res1 = exercise_7::sort(fooArray, exercise_7::ssort);
 
-	exercise_7::ssort(fooArray, eArraySize, sizeof(int), exercise_7::intCmp);
+	/*vTimer::Timer t;
 
-	exercise_7::printIntArrayWithMsg(fooArray, eArraySize, "\nAfter sorting:\n\t");
 
+
+
+	std::cout <<  "\nBefore sorting:\n\t" << fooArray;
+
+	t.startTimer();
+	exercise_7::ssort(fooArray.data(), fooArray.size(), sizeof(int), exercise_7::intCmp);
+	t.stopTimer();
+
+	std::cout <<  "\nAfter sorting:\n\t" << fooArray;
+	std::cout << "duration: " << t.getResult() << "s" << std::endl;
+
+	float res1 = t.getResult();
+
+
+
+	fooArray = { 4, 3, 2, 1, 5};
+
+
+
+
+
+	std::cout <<  "\nBefore sorting:\n\t" << fooArray;
+
+	t.startTimer();
+	exercise_7::newSsort(fooArray.data(), eArraySize, sizeof(int), exercise_7::intCmp);
+	t.stopTimer();
+
+	std::cout <<  "\nAfter sorting:\n\t" << fooArray;
+	std::cout << "duration: " << t.getResult() << "s" << std::endl;
+
+
+
+
+	if (res1 > t.getResult())
+		std::cout << "\n\nThe new ssort is faster\n\n";
+	else
+		std::cout << "\n\nThe new ssort is slower\n\n";
+*/
 	return 0;
 }
