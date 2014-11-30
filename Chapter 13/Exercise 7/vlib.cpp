@@ -1,6 +1,5 @@
-#include <iostream>	//std::cout, std::cerr
-#include <fstream>
-#include <algorithm>
+#include <iostream>		//std::cout, std::cerr
+#include <algorithm>	//std::sort
 #include "vlib.hpp"
 
 namespace exercise_7{
@@ -43,18 +42,6 @@ namespace exercise_7{
 	void newSsort(void* base, size_t n, size_t sz, CFT cmp)
 	{
 		std::sort(reinterpret_cast<int*>(base), reinterpret_cast<int*>(base) + n + 1);
-	}
-
-	void printIntArrayWithMsg(int arr[], size_t size,const std::string msg)
-	{
-		std::cout << msg;
-
-		for (int i = 0; i < size; ++i)
-		{
-			std::cout << arr[i] << " ";
-		}
-
-		std::cout << std::endl;
 	}
 
 }//namespace exercise_7

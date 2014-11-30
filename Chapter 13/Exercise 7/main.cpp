@@ -5,51 +5,19 @@
 
 int main(int argc, const char* arfgv[])
 {
-	enum { eArraySize = 5 };
-	std::array<int, eArraySize> fooArray { 4, 3, 2, 1, 5};
+	enum { eArraySize = 500 };
+	std::array<int, eArraySize> fooArray;
+
+	exercise_7::generateArrayWithRandomNumbers(fooArray);
 
 	float res1 = exercise_7::sort(fooArray, exercise_7::ssort);
 
-	/*vTimer::Timer t;
+	float res2 = exercise_7::sort(fooArray, exercise_7::newSsort);
 
-
-
-
-	std::cout <<  "\nBefore sorting:\n\t" << fooArray;
-
-	t.startTimer();
-	exercise_7::ssort(fooArray.data(), fooArray.size(), sizeof(int), exercise_7::intCmp);
-	t.stopTimer();
-
-	std::cout <<  "\nAfter sorting:\n\t" << fooArray;
-	std::cout << "duration: " << t.getResult() << "s" << std::endl;
-
-	float res1 = t.getResult();
-
-
-
-	fooArray = { 4, 3, 2, 1, 5};
-
-
-
-
-
-	std::cout <<  "\nBefore sorting:\n\t" << fooArray;
-
-	t.startTimer();
-	exercise_7::newSsort(fooArray.data(), eArraySize, sizeof(int), exercise_7::intCmp);
-	t.stopTimer();
-
-	std::cout <<  "\nAfter sorting:\n\t" << fooArray;
-	std::cout << "duration: " << t.getResult() << "s" << std::endl;
-
-
-
-
-	if (res1 > t.getResult())
-		std::cout << "\n\nThe new ssort is faster\n\n";
+	if (res1 > res2)
+		std::cout << "\n\nThe new ssort is faster sorting a " << eArraySize << " element array by " << res1 - res2 << "\n\n";
 	else
-		std::cout << "\n\nThe new ssort is slower\n\n";
-*/
+		std::cout << "\n\nThe new ssort is slower sorting a " << eArraySize << " element array by " << res2 - res1 << "\n\n";
+
 	return 0;
 }

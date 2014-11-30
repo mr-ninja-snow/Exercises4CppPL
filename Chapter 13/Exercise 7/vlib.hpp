@@ -1,5 +1,7 @@
 #include <string>
 #include <array>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 #include "timer.hpp"
 #include "helper.hpp"
 
@@ -13,8 +15,6 @@ namespace exercise_7{
 
 	void ssort(void* base, size_t n, size_t sz, CFT cmp);
 	void newSsort(void* base, size_t n, size_t sz, CFT cmp);
-
-	void printIntArrayWithMsg(int arr[], size_t size,const std::string msg);
 
 	using SSF = void(void*, size_t, size_t, CFT);
 	template<typename T, std::size_t SIZE>
@@ -31,6 +31,18 @@ namespace exercise_7{
 		std::cout << "duration: " << t.getResult() << "s" << std::endl;
 
 		return t.getResult();
+	}
+
+	template<std::size_t SIZE>
+	void generateArrayWithRandomNumbers(std::array<int, SIZE>& fooArray)
+	{
+		/* initialize random seed: */
+		srand (time(NULL));
+
+		for (auto& elem : fooArray)
+		{
+			elem = rand() % 1000;
+		}
 	}
 
 }
