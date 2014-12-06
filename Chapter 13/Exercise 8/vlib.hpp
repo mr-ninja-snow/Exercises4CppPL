@@ -21,12 +21,15 @@ namespace exercise_8{
 		{}
 	};
 
-	bool addATnodeToTree(Tnode&, const std::string, int levelCount = 0);
-	int getTnodeCount(Tnode& tree, int nodeCount = 0);
-	Tnode* createAndFillInTnode(const std::string word, int levelCount);
-	void printTnodeTree(Tnode& tree);
-	int getTnodeTreeDepthInLevels(Tnode& tree, int currnetLevel = 0);
-	void printTnode(Tnode& tNode, int levelLeftToPrint = -1);
+	bool addATnodeToTree(Tnode&, const std::string, const int levelCount = 0);
+	int getTnodeCount(const Tnode& tree, int nodeCount = 0);
+	Tnode* createAndFillInTnode(const std::string word, const int levelCount);
+	void printTnodeTree(const Tnode& tree);
+	std::string insertIndentation(const int numberOfTabs);
+	int getTnodeTreeDepthInLevels(const Tnode& tree, const int currnetLevel = 0);
+	void printTnode(const Tnode& tNode, const int levelLeftToPrint = -1);
+
+	std::ostream& operator<<(std::ostream& o, const Tnode& tNode);
 
 	/* using CFT = int(const void*, const void*);
 	int intCmp(const void* a, const void* b);

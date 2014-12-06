@@ -4,33 +4,33 @@
 
 namespace exercise_8{
 
-	bool addATnodeToTree(Tnode& tree, const std::string word, int levelCount)
+	bool addATnodeToTree(Tnode& tree, const std::string word, const int levelCount)
 	{
-		levelCount = (levelCount == 0) ? 1 : levelCount;
+		int currentLevelCount = (levelCount == 0) ? 1 : levelCount;
 
 		std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Entered tree level " << levelCount << "\n\n";
 
 		if (tree.word == "")
 		{
-			tree = Tnode(word, levelCount);
+			tree = Tnode(word, currentLevelCount);
 
 			return true;
 		}
 
-		//tree.right = (tree.right == nullptr) ? createAndFillInTnode(word, levelCount) : tree.right;
+		//tree.right = (tree.right == nullptr) ? createAndFillInTnode(word, currentLevelCount) : tree.right;
 
 		if (tree.right == nullptr)
 		{
-			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode on right side of tree level " << levelCount << "\n\n";
-			tree.right = createAndFillInTnode(word, levelCount);
+			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode on right side of tree level " << currentLevelCount << "\n\n";
+			tree.right = createAndFillInTnode(word, currentLevelCount);
 
 			return true;
 		}
 
 		if (tree.left == nullptr)
 		{
-			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode on left side of tree level " << levelCount << "\n\n";
-			tree.left = createAndFillInTnode(word, levelCount);
+			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode on left side of tree level " << currentLevelCount << "\n\n";
+			tree.left = createAndFillInTnode(word, currentLevelCount);
 
 			return true;
 		}
@@ -48,14 +48,14 @@ namespace exercise_8{
 		//if (ncr = (getTnodeCount(*(tree.right))) < (ncl = getTnodeCount(*(tree.left))))
 		if (ncr < ncl)
 		{
-			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Drill down to the rigth on level " << levelCount << " --->(" << ncl << "|" << ncr <<")\n\n";
-			addATnodeToTree(*(tree.right), word, levelCount + 1);
+			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Drill down to the rigth on level " << currentLevelCount << " --->(" << ncl << "|" << ncr <<")\n\n";
+			addATnodeToTree(*(tree.right), word, currentLevelCount + 1);
 			return true;
 		}
 		else
 		{
-			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Drill down to the left on level " << levelCount << " <---(" << ncl << "|" << ncr <<")\n\n";
-			addATnodeToTree(*(tree.left), word, levelCount + 1);
+			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Drill down to the left on level " << currentLevelCount << " <---(" << ncl << "|" << ncr <<")\n\n";
+			addATnodeToTree(*(tree.left), word, currentLevelCount + 1);
 			return true;
 		}
 		// if (addATnodeToTree(*(tree.right), word, levelCount + 1))
@@ -71,7 +71,7 @@ namespace exercise_8{
 		// return false;
 	}
 
-	int getTnodeCount(Tnode& tree, int nodeCount)
+	int getTnodeCount(const Tnode& tree, int nodeCount)
 	{
 		// std::cout << "nodeCount - " << nodeCount << "\n";
 		if (tree.right != nullptr)
@@ -87,7 +87,7 @@ namespace exercise_8{
 		return nodeCount;
 	}
 
-	Tnode* createAndFillInTnode(const std::string word, int levelCount)
+	Tnode* createAndFillInTnode(const std::string word, const int levelCount)
 	{
 		Tnode* newTNode = new Tnode;
 
@@ -100,14 +100,98 @@ namespace exercise_8{
 		return newTNode;
 	}
 
-	void printTnodeTree(Tnode& tree)
+	void printTnodeTree(const Tnode& tree)
 	{
 		int treeDepth = getTnodeTreeDepthInLevels(tree);
 
-		
+		/*std::cout << insertIndentation(treeDepth) << tree << "\n";
+
+		int numberOfSubNodes = 2;
+		Tnode** tNodesToPrint = new Tnode*[numberOfSubNodes];
+
+		tNodesToPrint[0] = tree.left;
+		tNodesToPrint[1] = tree.right;
+
+		--treeDepth;
+		std::cout << insertIndentation(treeDepth) << *tNodesToPrint[0];
+		std::cout << insertIndentation(treeDepth) << *tNodesToPrint[1];
+		std::cout << "\n";
+
+*/
+
+		size_t sizeOfTnodesToPrint1 = 0;
+		const Tnode** tNodesToPrint1;
+
+		size_t sizeOfTnodesToPrint2 = 0;
+		const Tnode** tNodesToPrint2;
+
+		bool printArray1 = true;
+
+		sizeOfTnodesToPrint1 = 1;
+		tNodesToPrint1 = new const Tnode*[sizeOfTnodesToPrint1];
+		tNodesToPrint1[0] = &tree;
+
+		for (int indent = treeDepth; indent > 0; --indent)
+		{
+
+			if (printArray1)
+			{
+				for (int i = 0; i < sizeOfTnodesToPrint1; ++i)
+					std::cout << insertIndentation(indent) << *tNodesToPrint1[i];
+				std::cout << "\n";
+
+				sizeOfTnodesToPrint2 = sizeOfTnodesToPrint1 * 2;
+				tNodesToPrint2 = new const Tnode*[sizeOfTnodesToPrint2];
+
+				int index = 0;
+				for (int i = 0; i < sizeOfTnodesToPrint1; ++i)
+				{
+					tNodesToPrint2[index++] = tNodesToPrint1[i]->left;
+					tNodesToPrint2[index++] = tNodesToPrint1[i]->right;
+				}
+				delete [] tNodesToPrint1;
+
+				printArray1 = false;
+				continue;
+			}
+			if (!printArray1)
+			{
+				for (int i = 0; i < sizeOfTnodesToPrint2; ++i)
+					std::cout << insertIndentation(indent) << *tNodesToPrint2[i];
+				std::cout << "\n";
+
+				sizeOfTnodesToPrint1 = sizeOfTnodesToPrint2 * 2;
+				tNodesToPrint1 = new const Tnode*[sizeOfTnodesToPrint1];
+
+				int index = 0;
+				for (int i = 0; i < sizeOfTnodesToPrint2; ++i)
+				{
+					tNodesToPrint1[index++] = tNodesToPrint2[i]->left;
+					tNodesToPrint1[index++] = tNodesToPrint2[i]->right;
+				}
+				delete [] tNodesToPrint2;
+
+				printArray1 = true;
+				continue;
+			}
+
+
+/*
+			Tnode** tNodesToPrint2 = new Tnode*[numberOfSubNodes * 2];
+			int index = 0;
+			for (int i = 0; i < numberOfSubNodes; ++i)
+			{
+				tNodesToPrint2[index++] = tNodesToPrint[i]->left;
+				tNodesToPrint2[index++] = tNodesToPrint[i]->right;
+			}
+			numberOfSubNodes *= 2;
+
+			for (int i = 0; i < numberOfSubNodes; ++i)
+				std::cout << insertIndentation(i) << *tNodesToPrint2[i];*/
+		}
 	}
 
-	int getTnodeTreeDepthInLevels(Tnode& tree, int currnetLevel)
+	int getTnodeTreeDepthInLevels(const Tnode& tree, const int currnetLevel)
 	{
 		static int maxDepth = 0;
 
@@ -125,6 +209,26 @@ namespace exercise_8{
 	void printTnode(Tnode& tNode, int levelLeftToPrint)
 	{
 
+	}
+
+	std::string insertIndentation(const int numberOfTabs)
+	{
+		std::string str;
+
+		for (int i = 0; i < numberOfTabs; ++i)
+		{
+			str += "    ";
+		}
+
+		return str;
+	}
+
+	std::ostream& operator<<(std::ostream& o, const Tnode& tNode)
+	{
+		// copy(arr.cbegin(), arr.cend(), std::ostream_iterator<T>(o, " "));
+		o << tNode.word << "    ";
+
+		return o;
 	}
 
 
