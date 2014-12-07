@@ -1,5 +1,5 @@
 #include <iostream>		//std::cout, std::cerr
-// #include <algorithm>	//std::sort
+#include <algorithm>
 #include "vlib.hpp"
 
 namespace exercise_8{
@@ -17,8 +17,6 @@ namespace exercise_8{
 			return true;
 		}
 
-		//tree.right = (tree.right == nullptr) ? createAndFillInTnode(word, currentLevelCount) : tree.right;
-
 		if (tree.right == nullptr)
 		{
 			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode for " << word << " on right side of tree level " << currentLevelCount << "\n\n";
@@ -35,17 +33,9 @@ namespace exercise_8{
 			return true;
 		}
 
-		// int ncr, ncl;
-
-		//debug
 		int ncr = getTnodeCount(*(tree.right));
-
-		// std::cout << "nodes on the right - " << ncr << "\n";
-
 		int ncl = getTnodeCount(*(tree.left));
-		// std::cout << "nodes on the left - " << ncl << "\n";
 
-		//if (ncr = (getTnodeCount(*(tree.right))) < (ncl = getTnodeCount(*(tree.left))))
 		if (ncr < ncl)
 		{
 			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Drill down to the rigth on level " << currentLevelCount << " --->(" << ncl << "|" << ncr <<")\n\n";
@@ -58,22 +48,10 @@ namespace exercise_8{
 			addATnodeToTree(*(tree.left), word, currentLevelCount + 1);
 			return true;
 		}
-		// if (addATnodeToTree(*(tree.right), word, levelCount + 1))
-		// {
-		// 	return true;
-		// }
-
-		// if (addATnodeToTree(*(tree.left), word, levelCount + 1))
-		// {
-		// 	return true;
-		// }
-
-		// return false;
 	}
 
 	int getTnodeCount(const Tnode& tree, int nodeCount)
 	{
-		// std::cout << "nodeCount - " << nodeCount << "\n";
 		if (tree.right != nullptr)
 		{
 			nodeCount = getTnodeCount(*(tree.right), ++nodeCount);
@@ -104,21 +82,6 @@ namespace exercise_8{
 	{
 		int treeDepth = getTnodeTreeDepthInLevels(tree);
 
-		/*std::cout << insertIndentation(treeDepth) << tree << "\n";
-
-		int numberOfSubNodes = 2;
-		Tnode** tNodesToPrint = new Tnode*[numberOfSubNodes];
-
-		tNodesToPrint[0] = tree.left;
-		tNodesToPrint[1] = tree.right;
-
-		--treeDepth;
-		std::cout << insertIndentation(treeDepth) << *tNodesToPrint[0];
-		std::cout << insertIndentation(treeDepth) << *tNodesToPrint[1];
-		std::cout << "\n";
-
-*/
-
 		size_t sizeOfTnodesToPrint1 = 0;
 		const Tnode** tNodesToPrint1;
 
@@ -133,7 +96,6 @@ namespace exercise_8{
 
 		for (int indent = treeDepth; indent >= 0; --indent)
 		{
-			std::cout << "???" << indent << std::endl;
 			if (printArray1)
 			{
 				for (int i = 0; i < sizeOfTnodesToPrint1; ++i)
@@ -157,7 +119,6 @@ namespace exercise_8{
 				}
 				delete [] tNodesToPrint1;
 				tNodesToPrint1 = nullptr;
-				std::cout << "free 1\n";
 
 				printArray1 = false;
 				continue;
@@ -185,25 +146,10 @@ namespace exercise_8{
 				}
 				delete [] tNodesToPrint2;
 				tNodesToPrint2 = nullptr;
-				std::cout << "free 2\n";
 
 				printArray1 = true;
 				continue;
 			}
-
-
-/*
-			Tnode** tNodesToPrint2 = new Tnode*[numberOfSubNodes * 2];
-			int index = 0;
-			for (int i = 0; i < numberOfSubNodes; ++i)
-			{
-				tNodesToPrint2[index++] = tNodesToPrint[i]->left;
-				tNodesToPrint2[index++] = tNodesToPrint[i]->right;
-			}
-			numberOfSubNodes *= 2;
-
-			for (int i = 0; i < numberOfSubNodes; ++i)
-				std::cout << insertIndentation(i) << *tNodesToPrint2[i];*/
 		}
 
 		if (tNodesToPrint1)
@@ -227,11 +173,6 @@ namespace exercise_8{
 		return (maxDepthR > maxDepthL) ? maxDepthR : maxDepthL;
 	}
 
-	void printTnode(Tnode& tNode, int levelLeftToPrint)
-	{
-
-	}
-
 	std::string insertIndentation(const int numberOfTabs)
 	{
 		std::string str;
@@ -246,62 +187,33 @@ namespace exercise_8{
 
 	std::ostream& operator<<(std::ostream& o, const Tnode& tNode)
 	{
-		// copy(arr.cbegin(), arr.cend(), std::ostream_iterator<T>(o, " "));
 		o << tNode.word << "    ";
 
 		return o;
 	}
 
-
-	/*Tnode* newTNode = new Tnode;
-
-			newTNode->word = word;
-			newTNode->count = levelCount;
-
-			newTNode->right = nullptr;
-			newTNode->left = nullptr;
-
-			tree.right = newTNode;*/
-
-
-	/*using CFT = int(const void*, const void*);
-
-	int intCmp(const void* a, const void* b)
+	void printTnodeContentInAlphabeticalOrder(const Tnode& tree)
 	{
-		const int* _a = reinterpret_cast<const int*>(a);
-		const int* _b = reinterpret_cast<const int*>(b);
+		std::vector<std::string> words;
 
-		return (*_a < *_b) ? -1 : ((*_a > *_b) ? 1 : 0);
+		retriveAllTnodeTreeWords(tree, words);
+
+		std::sort(words.begin(), words.end());
+
+		for(auto el : words)
+			std::cout << el << "\n";
 	}
 
-	void ssort(void* base, size_t n, size_t sz, CFT cmp)
+	void retriveAllTnodeTreeWords(const Tnode& tNode, std::vector<std::string>& words)
 	{
-		for (int gap=n/2; 0<gap; gap/=2)
-		{
-			for (int i=gap; i!=n; i++)
-				for (int j=i-gap; 0<=j; j-=gap)
-				{
-					char* b = static_cast<char*>(base);     // necessary cast
-					char* pj = b+j*sz;                 // &base[j]
-					char* pjg = b+(j+gap)*sz;          // &base[j+gap]
+		words.push_back(tNode.word);
 
-					if (cmp(pjg,pj)<0)           // swap base[j] and base[j+gap]:
-					{
-						for (int k=0; k!=sz; k++)
-						{
-							char temp = pj[k];
+		if (tNode.right != nullptr)
+			retriveAllTnodeTreeWords(*(tNode.right), words);
 
-							pj[k] = pjg[k];
-							pjg[k] = temp;
-						}
-					}
-				}
-		}
+		if (tNode.left != nullptr)
+			retriveAllTnodeTreeWords(*(tNode.left), words);
+
 	}
 
-	void newSsort(void* base, size_t n, size_t sz, CFT cmp)
-	{
-		std::sort(reinterpret_cast<int*>(base), reinterpret_cast<int*>(base) + n + 1);
-	}*/
-
-}//namespace exercise_7
+}//namespace exercise_8

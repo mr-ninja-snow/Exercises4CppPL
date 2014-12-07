@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 // #include <array>
 // #include <stdlib.h>     /* srand, rand */
 // #include <time.h>       /* time */
@@ -30,6 +31,8 @@ namespace exercise_8{
 	void printTnode(const Tnode& tNode, const int levelLeftToPrint = -1);
 
 	std::ostream& operator<<(std::ostream& o, const Tnode& tNode);
+	void retriveAllTnodeTreeWords(const Tnode& tNode, std::vector<std::string>& words);
+	void printTnodeContentInAlphabeticalOrder(const Tnode& tree);
 
 	/* using CFT = int(const void*, const void*);
 	int intCmp(const void* a, const void* b);

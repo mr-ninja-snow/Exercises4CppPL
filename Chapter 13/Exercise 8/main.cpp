@@ -8,22 +8,21 @@ int main(int argc, const char* arfgv[])
 
 	exercise_8::Tnode tree;
 
-	exercise_8::addATnodeToTree(tree, "1");
-	exercise_8::addATnodeToTree(tree, "2");
-	exercise_8::addATnodeToTree(tree, "3");
-	exercise_8::addATnodeToTree(tree, "4");
-	exercise_8::addATnodeToTree(tree, "5");
-	exercise_8::addATnodeToTree(tree, "6");
-	exercise_8::addATnodeToTree(tree, "7");
-	exercise_8::addATnodeToTree(tree, "8");
-	exercise_8::addATnodeToTree(tree, "9");
-	exercise_8::addATnodeToTree(tree, "10");
+	exercise_8::addATnodeToTree(tree, "x");
+	exercise_8::addATnodeToTree(tree, "l");
+	exercise_8::addATnodeToTree(tree, "m");
+	exercise_8::addATnodeToTree(tree, "z");
+	exercise_8::addATnodeToTree(tree, "j");
+	exercise_8::addATnodeToTree(tree, "n");
+	exercise_8::addATnodeToTree(tree, "o");
+	exercise_8::addATnodeToTree(tree, "c");
+	exercise_8::addATnodeToTree(tree, "b");
+	exercise_8::addATnodeToTree(tree, "a");
 	exercise_8::addATnodeToTree(tree, "this");
 	exercise_8::addATnodeToTree(tree, "world");
 	exercise_8::addATnodeToTree(tree, "to");
 	exercise_8::addATnodeToTree(tree, "this");
 	exercise_8::addATnodeToTree(tree, "world");
-	
 	exercise_8::addATnodeToTree(tree, "to");
 	exercise_8::addATnodeToTree(tree, "this");
 	 exercise_8::addATnodeToTree(tree, "world");
@@ -33,6 +32,8 @@ int main(int argc, const char* arfgv[])
 	exercise_8::printTnodeTree(tree);
 
 	std::cout << "\n\n\n";
+
+	printTnodeContentInAlphabeticalOrder(tree);
 
 	return 0;
 }
