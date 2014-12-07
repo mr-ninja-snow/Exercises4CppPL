@@ -18,14 +18,15 @@ int main(int argc, const char* arfgv[])
 	exercise_8::addATnodeToTree(tree, "8");
 	exercise_8::addATnodeToTree(tree, "9");
 	exercise_8::addATnodeToTree(tree, "10");
-	// exercise_8::addATnodeToTree(tree, "this");
-	// exercise_8::addATnodeToTree(tree, "world");
-	// exercise_8::addATnodeToTree(tree, "to");
-	// exercise_8::addATnodeToTree(tree, "this");
-	// exercise_8::addATnodeToTree(tree, "world");
-	// exercise_8::addATnodeToTree(tree, "to");
-	// exercise_8::addATnodeToTree(tree, "this");
-	// exercise_8::addATnodeToTree(tree, "world");
+	exercise_8::addATnodeToTree(tree, "this");
+	exercise_8::addATnodeToTree(tree, "world");
+	exercise_8::addATnodeToTree(tree, "to");
+	exercise_8::addATnodeToTree(tree, "this");
+	exercise_8::addATnodeToTree(tree, "world");
+	
+	exercise_8::addATnodeToTree(tree, "to");
+	exercise_8::addATnodeToTree(tree, "this");
+	 exercise_8::addATnodeToTree(tree, "world");
 
 	std::cout << "This is the depth of the tree " << exercise_8::getTnodeTreeDepthInLevels(tree) << std::endl;
 

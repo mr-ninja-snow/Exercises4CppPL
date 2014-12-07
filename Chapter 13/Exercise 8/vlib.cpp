@@ -21,7 +21,7 @@ namespace exercise_8{
 
 		if (tree.right == nullptr)
 		{
-			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode on right side of tree level " << currentLevelCount << "\n\n";
+			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode for " << word << " on right side of tree level " << currentLevelCount << "\n\n";
 			tree.right = createAndFillInTnode(word, currentLevelCount);
 
 			return true;
@@ -29,7 +29,7 @@ namespace exercise_8{
 
 		if (tree.left == nullptr)
 		{
-			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode on left side of tree level " << currentLevelCount << "\n\n";
+			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode for " << word << " on left side of tree level " << currentLevelCount << "\n\n";
 			tree.left = createAndFillInTnode(word, currentLevelCount);
 
 			return true;
@@ -131,13 +131,16 @@ namespace exercise_8{
 		tNodesToPrint1 = new const Tnode*[sizeOfTnodesToPrint1];
 		tNodesToPrint1[0] = &tree;
 
-		for (int indent = treeDepth; indent > 0; --indent)
+		for (int indent = treeDepth; indent >= 0; --indent)
 		{
-
+			std::cout << "???" << indent << std::endl;
 			if (printArray1)
 			{
 				for (int i = 0; i < sizeOfTnodesToPrint1; ++i)
-					std::cout << insertIndentation(indent) << *tNodesToPrint1[i];
+					if (tNodesToPrint1[i])
+						std::cout << insertIndentation(indent) << *tNodesToPrint1[i];
+					else
+							std::cout << insertIndentation(indent) << "-    ";
 				std::cout << "\n";
 
 				sizeOfTnodesToPrint2 = sizeOfTnodesToPrint1 * 2;
@@ -146,10 +149,15 @@ namespace exercise_8{
 				int index = 0;
 				for (int i = 0; i < sizeOfTnodesToPrint1; ++i)
 				{
-					tNodesToPrint2[index++] = tNodesToPrint1[i]->left;
-					tNodesToPrint2[index++] = tNodesToPrint1[i]->right;
+					if (tNodesToPrint1[i])
+					{
+						tNodesToPrint2[index++] = tNodesToPrint1[i]->left;
+						tNodesToPrint2[index++] = tNodesToPrint1[i]->right;
+					}
 				}
 				delete [] tNodesToPrint1;
+				tNodesToPrint1 = nullptr;
+				std::cout << "free 1\n";
 
 				printArray1 = false;
 				continue;
@@ -157,7 +165,10 @@ namespace exercise_8{
 			if (!printArray1)
 			{
 				for (int i = 0; i < sizeOfTnodesToPrint2; ++i)
-					std::cout << insertIndentation(indent) << *tNodesToPrint2[i];
+					if (tNodesToPrint2[i])
+						std::cout << insertIndentation(indent) << *tNodesToPrint2[i] ;
+					else
+						std::cout << insertIndentation(indent) << "-    ";
 				std::cout << "\n";
 
 				sizeOfTnodesToPrint1 = sizeOfTnodesToPrint2 * 2;
@@ -166,10 +177,15 @@ namespace exercise_8{
 				int index = 0;
 				for (int i = 0; i < sizeOfTnodesToPrint2; ++i)
 				{
-					tNodesToPrint1[index++] = tNodesToPrint2[i]->left;
-					tNodesToPrint1[index++] = tNodesToPrint2[i]->right;
+					if (tNodesToPrint2[i])
+					{
+						tNodesToPrint1[index++] = tNodesToPrint2[i]->left;
+						tNodesToPrint1[index++] = tNodesToPrint2[i]->right;
+					}
 				}
 				delete [] tNodesToPrint2;
+				tNodesToPrint2 = nullptr;
+				std::cout << "free 2\n";
 
 				printArray1 = true;
 				continue;
@@ -189,21 +205,26 @@ namespace exercise_8{
 			for (int i = 0; i < numberOfSubNodes; ++i)
 				std::cout << insertIndentation(i) << *tNodesToPrint2[i];*/
 		}
+
+		if (tNodesToPrint1)
+			delete [] tNodesToPrint1;
+
+		if (tNodesToPrint2)
+			delete [] tNodesToPrint2;
 	}
 
 	int getTnodeTreeDepthInLevels(const Tnode& tree, const int currnetLevel)
 	{
-		static int maxDepth = 0;
-
-		maxDepth = (maxDepth < currnetLevel) ? currnetLevel : maxDepth;
+		int maxDepthR = currnetLevel;
+		int maxDepthL = currnetLevel;
 
 		if (tree.right != nullptr)
-			getTnodeTreeDepthInLevels(*(tree.right), currnetLevel + 1);
+			maxDepthR = getTnodeTreeDepthInLevels(*(tree.right), currnetLevel + 1);
 
 		if (tree.left != nullptr)
-			getTnodeTreeDepthInLevels(*(tree.left), currnetLevel + 1);
+			maxDepthL = getTnodeTreeDepthInLevels(*(tree.left), currnetLevel + 1);
 
-		return maxDepth;
+		return (maxDepthR > maxDepthL) ? maxDepthR : maxDepthL;
 	}
 
 	void printTnode(Tnode& tNode, int levelLeftToPrint)
