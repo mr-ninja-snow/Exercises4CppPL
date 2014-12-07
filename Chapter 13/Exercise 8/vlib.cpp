@@ -1,34 +1,35 @@
 #include <iostream>		//std::cout, std::cerr
-#include <algorithm>
 #include "vlib.hpp"
 
 namespace exercise_8{
 
-	bool addATnodeToTree(Tnode& tree, const std::string word, const int levelCount)
+	bool addATnodeToTree(Tnode& tree, const char word[], const int levelCount)
 	{
 		int currentLevelCount = (levelCount == 0) ? 1 : levelCount;
 
 		std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Entered tree level " << levelCount << "\n\n";
 
-		if (tree.word == "")
+		if (tree.word == nullptr)
 		{
-			tree = Tnode(word, currentLevelCount);
+			size_t sizeOfWord = std::strlen(word);//sizeof(word)/sizeof(char);
+			tree.word = new char[sizeOfWord];
+			std::copy_n(word, sizeOfWord, tree.word);
 
 			return true;
 		}
 
 		if (tree.right == nullptr)
 		{
-			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode for " << word << " on right side of tree level " << currentLevelCount << "\n\n";
-			tree.right = createAndFillInTnode(word, currentLevelCount);
+			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode for '" << word << "' on right side of tree level " << currentLevelCount << "\n\n";
+			tree.right = createAndFillInTnode(word);
 
 			return true;
 		}
 
 		if (tree.left == nullptr)
 		{
-			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode for " << word << " on left side of tree level " << currentLevelCount << "\n\n";
-			tree.left = createAndFillInTnode(word, currentLevelCount);
+			std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << "|Created new tnode for '" << word << "' on left side of tree level " << currentLevelCount << "\n\n";
+			tree.left = createAndFillInTnode(word);
 
 			return true;
 		}
@@ -65,15 +66,15 @@ namespace exercise_8{
 		return nodeCount;
 	}
 
-	Tnode* createAndFillInTnode(const std::string word, const int levelCount)
+	Tnode* createAndFillInTnode(const char word[])
 	{
 		Tnode* newTNode = new Tnode;
 
-		newTNode->word = word;
-		newTNode->count = levelCount;
+		size_t sizeOfWord = std::strlen(word);//sizeof(word)/sizeof(char);
+		(*newTNode).word = new char[sizeOfWord];
+		std::copy_n(word, sizeOfWord + 1, (*newTNode).word);
 
-		newTNode->right = nullptr;
-		newTNode->left = nullptr;
+		std::cout << "CREATED - " << (*newTNode).word  << " from - " << word << "\n";
 
 		return newTNode;
 	}
@@ -100,9 +101,9 @@ namespace exercise_8{
 			{
 				for (int i = 0; i < sizeOfTnodesToPrint1; ++i)
 					if (tNodesToPrint1[i])
-						std::cout << insertIndentation(indent) << *tNodesToPrint1[i];
+						std::cout << insertIndentation(indent) << (*tNodesToPrint1[i]).word;
 					else
-							std::cout << insertIndentation(indent) << "-    ";
+						std::cout << insertIndentation(indent) << "-    ";
 				std::cout << "\n";
 
 				sizeOfTnodesToPrint2 = sizeOfTnodesToPrint1 * 2;
@@ -127,7 +128,7 @@ namespace exercise_8{
 			{
 				for (int i = 0; i < sizeOfTnodesToPrint2; ++i)
 					if (tNodesToPrint2[i])
-						std::cout << insertIndentation(indent) << *tNodesToPrint2[i] ;
+						std::cout << insertIndentation(indent) << (*tNodesToPrint2[i]).word;
 					else
 						std::cout << insertIndentation(indent) << "-    ";
 				std::cout << "\n";
