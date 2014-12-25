@@ -18,4 +18,42 @@ namespace exercise_9{
 		return o;
 	}
 
+	double calculateDeterminant2x2Matrix(const SqrMatrix& sqrMatrix)
+	{
+		if (sqrMatrix.getNumberOfRows() != NUMBER_OF_ROWS_IN_2X2_MATRIX)
+		{
+			throw(IsNot2x2Matrix("This is not a 2 by 2 matrix!"));
+		}
+
+		double const* const* matrix = sqrMatrix.getMatrix();
+		return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0];
+	}
+
+	double calculateDeterminantNxNMatrix(const SqrMatrix& sqrMatrix)
+	{
+		double const* const* matrix = sqrMatrix.getMatrix();
+		if (sqrMatrix.getNumberOfRows() > NUMBER_OF_ROWS_IN_2X2_MATRIX)
+		{
+			double res = 0;
+			int sign = 1;
+			for (int i = 0; i < sqrMatrix.getNumberOfRows(); ++i)
+			{
+				res += sign*matrix[0][i]*calculateDeterminantNxNMatrix(getSubMatrixWithoutColAndRow(matrix, 0, i));
+				sign *= (-1);
+			}
+			return 
+		}
+		else
+		{
+			return calculateDeterminant2x2Matrix(sqrMatrix);
+		}
+	}
+
+	const SqrMatrix getSubMatrixWithoutColAndRow(const SqrMatrix& matrix, const int row, const int col)
+	{
+		SqrMatrix subMatrix(matrix.getNumberOfRows());
+
+		//vstepano todo
+	}
+
 }//namespace exercise_8
