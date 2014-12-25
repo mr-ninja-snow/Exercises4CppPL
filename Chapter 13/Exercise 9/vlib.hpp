@@ -12,6 +12,8 @@ namespace exercise_9{
 	const unsigned char PADDING_SIZE = 3;
 	const unsigned char NUMBER_OF_ROWS_IN_2X2_MATRIX = 2;
 
+	const bool WITH_RANDOM_VALUES = true;
+
 	struct SqrMatrix
 	{
 		double** data;

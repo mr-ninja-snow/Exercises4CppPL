@@ -38,10 +38,10 @@ namespace exercise_9{
 			int sign = 1;
 			for (int i = 0; i < sqrMatrix.getNumberOfRows(); ++i)
 			{
-				res += sign*matrix[0][i]*calculateDeterminantNxNMatrix(getSubMatrixWithoutColAndRow(matrix, 0, i));
+				res += sign * (matrix[0][i]) * calculateDeterminantNxNMatrix( getSubMatrixWithoutColAndRow(sqrMatrix, 0, i));
 				sign *= (-1);
 			}
-			return 
+			return res;
 		}
 		else
 		{
@@ -49,11 +49,33 @@ namespace exercise_9{
 		}
 	}
 
-	const SqrMatrix getSubMatrixWithoutColAndRow(const SqrMatrix& matrix, const int row, const int col)
+	const SqrMatrix getSubMatrixWithoutColAndRow(const SqrMatrix& sqrMatrix, const int row, const int col)
 	{
-		SqrMatrix subMatrix(matrix.getNumberOfRows());
+		SqrMatrix subMatrix(sqrMatrix.getNumberOfRows());
 
-		//vstepano todo
+		int subMatrixX = 0;
+		int subMatrixY = 0;
+
+		double const* const* matrix = sqrMatrix.getMatrix();
+		for (int i = 0; i < sqrMatrix.getNumberOfRows(); ++i)
+		{
+			if (i != row)
+			{
+				for (int j = 0; j < sqrMatrix.getNumberOfRows(); ++j)
+				{
+					if (j != col)
+					{
+						//vstepano bad design: accessing "private" data
+						subMatrix.data[subMatrixY][subMatrixX] = matrix[i][j];
+						subMatrixX++;
+					}
+				}
+				subMatrixX = 0;
+				subMatrixY++;
+			}
+		}
+
+		return subMatrix;
 	}
 
 }//namespace exercise_8
