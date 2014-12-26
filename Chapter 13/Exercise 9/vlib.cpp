@@ -51,17 +51,18 @@ namespace exercise_9{
 
 	const SqrMatrix getSubMatrixWithoutColAndRow(const SqrMatrix& sqrMatrix, const int row, const int col)
 	{
-		SqrMatrix subMatrix(sqrMatrix.getNumberOfRows());
+		const int numberOfRows = sqrMatrix.getNumberOfRows();
+		SqrMatrix subMatrix(numberOfRows - 1);
 
 		int subMatrixX = 0;
 		int subMatrixY = 0;
 
 		double const* const* matrix = sqrMatrix.getMatrix();
-		for (int i = 0; i < sqrMatrix.getNumberOfRows(); ++i)
+		for (int i = 0; i < numberOfRows; ++i)
 		{
 			if (i != row)
 			{
-				for (int j = 0; j < sqrMatrix.getNumberOfRows(); ++j)
+				for (int j = 0; j < numberOfRows; ++j)
 				{
 					if (j != col)
 					{
@@ -78,4 +79,4 @@ namespace exercise_9{
 		return subMatrix;
 	}
 
-}//namespace exercise_8
+}//namespace exercise_9
