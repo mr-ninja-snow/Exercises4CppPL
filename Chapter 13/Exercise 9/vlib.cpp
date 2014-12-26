@@ -118,4 +118,19 @@ namespace exercise_9{
 		return cofactorMatrix;
 	}
 
+	SqrMatrix getTranspositionOfMatrix(const SqrMatrix& matrix)
+	{
+		//vstepano todo
+	}
+
+	SqrMatrix multiplyEveryElementOfMatrixByGivenNumber(const SqrMatrix& matrix)
+	{
+		//vstepano todo
+	}
+
+	SqrMatrix multiplyTwoMatrices(const SqrMatrix& matrix1, const SqrMatrix& matrix2)
+	{
+		//vstepano todo
+	}
+
 }//namespace exercise_9
