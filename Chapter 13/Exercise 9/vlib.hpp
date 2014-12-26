@@ -23,7 +23,7 @@ namespace exercise_9{
 		try : numberOfRows(size), data(nullptr)
 		{
 			std::default_random_engine e((unsigned int)time(0));
-			std::uniform_int_distribution<int> distribution(0,99);
+			std::uniform_int_distribution<int> distribution(0,9);
 
 			data = new double* [numberOfRows];
 			for (int i = 0; i < numberOfRows; ++i)
@@ -92,6 +92,8 @@ namespace exercise_9{
 	std::ostream& operator<<(std::ostream& o, const SqrMatrix& sqrMatrix);
 	double calculateDeterminant2x2Matrix(const SqrMatrix&);
 	double calculateDeterminantNxNMatrix(const SqrMatrix&);
+	SqrMatrix calculateMatrixOfMinorsForNxNMatrix(const SqrMatrix& sqrMatrix);
+	SqrMatrix calculateCofactorMatrixFromMatrixOfMinors(const SqrMatrix& matrixOfMinors);
 
 	const SqrMatrix getSubMatrixWithoutColAndRow(const SqrMatrix&, const int row, const int col);
 

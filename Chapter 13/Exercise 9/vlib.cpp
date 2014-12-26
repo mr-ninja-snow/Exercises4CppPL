@@ -79,4 +79,43 @@ namespace exercise_9{
 		return subMatrix;
 	}
 
+	SqrMatrix calculateMatrixOfMinorsForNxNMatrix(const SqrMatrix& sqrMatrix)
+	{
+		const int numberOfRows = sqrMatrix.getNumberOfRows();
+		SqrMatrix matrixOfMinors(numberOfRows);
+
+		for (int i = 0; i < numberOfRows; ++i)
+		{
+			for (int j = 0; j < numberOfRows; ++j)
+			{
+				matrixOfMinors.data[i][j] = calculateDeterminantNxNMatrix( getSubMatrixWithoutColAndRow(sqrMatrix, i, j));
+			}
+		}
+
+		return matrixOfMinors;
+	}
+
+	SqrMatrix calculateCofactorMatrixFromMatrixOfMinors(const SqrMatrix& matrixOfMinors)
+	{
+		const int numberOfRows = matrixOfMinors.getNumberOfRows();
+		SqrMatrix cofactorMatrix(numberOfRows);
+
+		int sign = 1;
+		for (int i = 0; i < numberOfRows; ++i)
+		{
+			if ((i % 2) == 0)
+				sign = 1;
+			else
+				sign = -1;
+
+			for (int j = 0; j < numberOfRows; ++j)
+			{
+				cofactorMatrix.data[i][j] = (sign * matrixOfMinors.data[i][j]);
+				sign *= (-1);
+			}
+		}
+
+		return cofactorMatrix;
+	}
+
 }//namespace exercise_9
