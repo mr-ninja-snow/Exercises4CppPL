@@ -89,11 +89,31 @@ namespace exercise_9{
 		std::string msg_;
 	};
 
+	class DiffrentSizeMatrices: public std::exception
+	{
+	public:
+		explicit DiffrentSizeMatrices(const char* message) : msg_(message) {}
+		explicit DiffrentSizeMatrices(const std::string& message) : msg_(message) {}
+		virtual ~DiffrentSizeMatrices() noexcept {}
+
+		virtual const char* what() const noexcept {
+			return msg_.c_str();
+		}
+
+	protected:
+		std::string msg_;
+	};
+
 	std::ostream& operator<<(std::ostream& o, const SqrMatrix& sqrMatrix);
 	double calculateDeterminant2x2Matrix(const SqrMatrix&);
 	double calculateDeterminantNxNMatrix(const SqrMatrix&);
 	SqrMatrix calculateMatrixOfMinorsForNxNMatrix(const SqrMatrix& sqrMatrix);
 	SqrMatrix calculateCofactorMatrixFromMatrixOfMinors(const SqrMatrix& matrixOfMinors);
+
+	SqrMatrix getTranspositionOfMatrix(const SqrMatrix& matrix);
+
+	SqrMatrix multiplyTwoSqrMatrices(const SqrMatrix& matrix1, const SqrMatrix& matrix2);
+	void multiplyEveryElementOfMatrixByGivenNumber(SqrMatrix& matrix, const double number);
 
 	const SqrMatrix getSubMatrixWithoutColAndRow(const SqrMatrix&, const int row, const int col);
 

@@ -120,17 +120,58 @@ namespace exercise_9{
 
 	SqrMatrix getTranspositionOfMatrix(const SqrMatrix& matrix)
 	{
-		//vstepano todo
+		const int numberOfRows = matrix.getNumberOfRows();
+		SqrMatrix transpostedMatrix(numberOfRows);
+
+		for (int i = 0; i < numberOfRows; ++i)
+		{
+			for (int j = 0; j < numberOfRows; ++j)
+			{
+				transpostedMatrix.data[i][j] = matrix.data[j][i];
+			}
+		}
+
+		return transpostedMatrix;
 	}
 
-	SqrMatrix multiplyEveryElementOfMatrixByGivenNumber(const SqrMatrix& matrix)
+	void multiplyEveryElementOfMatrixByGivenNumber(SqrMatrix& matrix, const double number)
 	{
-		//vstepano todo
+		const int numberOfRows = matrix.getNumberOfRows();
+
+		for (int i = 0; i < numberOfRows; ++i)
+		{
+			for (int j = 0; j < numberOfRows; ++j)
+			{
+				matrix.data[j][i] *= number;
+			}
+		}
 	}
 
-	SqrMatrix multiplyTwoMatrices(const SqrMatrix& matrix1, const SqrMatrix& matrix2)
+	SqrMatrix multiplyTwoSqrMatrices(const SqrMatrix& matrix1, const SqrMatrix& matrix2)
 	{
-		//vstepano todo
+		if (matrix1.getNumberOfRows() != matrix2.getNumberOfRows())
+		{
+			throw(DiffrentSizeMatrices("The two given matrices can't be multiplied, because the number of rows of the 1st matrix doesn't match the number of columns of the 2nd matrix!"));
+		}
+
+		const int numberOfRows = matrix1.getNumberOfRows();
+		SqrMatrix productMatrix(numberOfRows);
+
+		for (int i = 0; i < numberOfRows; ++i)
+		{
+			for (int j = 0; j < numberOfRows; ++j)
+			{
+				productMatrix.data[i][j] = 0;
+				for (int k = 0; k < numberOfRows; ++k)
+				{
+					productMatrix.data[i][j] += matrix1.data[j][k]*matrix2.data[k][j];
+				}
+				// productMatrix.data[i][j]
+				// transpostedMatrix.data[i][j] = matrix.data[j][i];
+			}
+		}
+
+		return productMatrix;
 	}
 
 }//namespace exercise_9
