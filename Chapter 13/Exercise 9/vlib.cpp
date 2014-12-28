@@ -164,10 +164,8 @@ namespace exercise_9{
 				productMatrix.data[i][j] = 0;
 				for (int k = 0; k < numberOfRows; ++k)
 				{
-					productMatrix.data[i][j] += matrix1.data[j][k]*matrix2.data[k][j];
+					productMatrix.data[i][j] += matrix1.data[i][k]*matrix2.data[k][j];
 				}
-				// productMatrix.data[i][j]
-				// transpostedMatrix.data[i][j] = matrix.data[j][i];
 			}
 		}
 

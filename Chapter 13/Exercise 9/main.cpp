@@ -4,17 +4,17 @@
 
 int main(int argc, const char* arfgv[])
 {
-	//exercise_9::SqrMatrix matrix(3, exercise_9::WITH_RANDOM_VALUES);
-	exercise_9::SqrMatrix matrix(3);
-	matrix.data[0][0] = 1;
-	matrix.data[1][0] = 1;
-	matrix.data[2][0] = 1;
-	matrix.data[0][1] = 3;
-	matrix.data[1][1] = 4;
-	matrix.data[2][1] = 3;
-	matrix.data[0][2] = 3;
-	matrix.data[1][2] = 3;
-	matrix.data[2][2] = 4;
+	exercise_9::SqrMatrix matrix(3, exercise_9::WITH_RANDOM_VALUES);
+	// exercise_9::SqrMatrix matrix(3);
+	// matrix.data[0][0] = 1;
+	// matrix.data[1][0] = 1;
+	// matrix.data[2][0] = 1;
+	// matrix.data[0][1] = 3;
+	// matrix.data[1][1] = 4;
+	// matrix.data[2][1] = 3;
+	// matrix.data[0][2] = 3;
+	// matrix.data[1][2] = 3;
+	// matrix.data[2][2] = 4;
 	std::cout << matrix;
 	const double determinant = calculateDeterminantNxNMatrix(matrix);
 	std::cout << "\n\tThe determinant of the given matrix is :" << calculateDeterminantNxNMatrix(matrix) << "\n\n";
@@ -28,7 +28,6 @@ int main(int argc, const char* arfgv[])
 	exercise_9::SqrMatrix transposedMatrix = getTranspositionOfMatrix(cofactorMatrix);
 	std::cout << "\n\nThe transposed matrix of the given matrix is :\n" << transposedMatrix << "\n\n";
 
-	//exercise_9::SqrMatrix inversedMatrix = multiplyEveryElementOfMatrixByGivenNumber(transposedMatrix, 1/determinant);
 	multiplyEveryElementOfMatrixByGivenNumber(transposedMatrix, 1/determinant);
 	std::cout << "\n\nThe inversed matrix of the given matrix is :\n" << transposedMatrix << "\n\n";
 
