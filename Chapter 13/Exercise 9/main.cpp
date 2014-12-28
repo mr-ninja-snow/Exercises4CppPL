@@ -5,18 +5,9 @@
 int main(int argc, const char* arfgv[])
 {
 	exercise_9::SqrMatrix matrix(3, exercise_9::WITH_RANDOM_VALUES);
-	// exercise_9::SqrMatrix matrix(3);
-	// matrix.data[0][0] = 1;
-	// matrix.data[1][0] = 1;
-	// matrix.data[2][0] = 1;
-	// matrix.data[0][1] = 3;
-	// matrix.data[1][1] = 4;
-	// matrix.data[2][1] = 3;
-	// matrix.data[0][2] = 3;
-	// matrix.data[1][2] = 3;
-	// matrix.data[2][2] = 4;
+
 	std::cout << matrix;
-	const double determinant = calculateDeterminantNxNMatrix(matrix);
+	const float determinant = calculateDeterminantNxNMatrix(matrix);
 	std::cout << "\n\tThe determinant of the given matrix is :" << calculateDeterminantNxNMatrix(matrix) << "\n\n";
 
 	exercise_9::SqrMatrix matrixOfMinors = calculateMatrixOfMinorsForNxNMatrix(matrix);

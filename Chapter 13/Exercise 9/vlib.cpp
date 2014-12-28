@@ -5,7 +5,7 @@ namespace exercise_9{
 
 	std::ostream& operator<<(std::ostream& o, const SqrMatrix& sqrMatrix)
 	{
-		double const* const* matrix = sqrMatrix.getMatrix();
+		float const* const* matrix = sqrMatrix.getMatrix();
 		for (int i = 0; i < sqrMatrix.getNumberOfRows(); ++i)
 		{
 			for (int j = 0; j < sqrMatrix.getNumberOfRows(); ++j)
@@ -18,23 +18,23 @@ namespace exercise_9{
 		return o;
 	}
 
-	double calculateDeterminant2x2Matrix(const SqrMatrix& sqrMatrix)
+	float calculateDeterminant2x2Matrix(const SqrMatrix& sqrMatrix)
 	{
 		if (sqrMatrix.getNumberOfRows() != NUMBER_OF_ROWS_IN_2X2_MATRIX)
 		{
 			throw(IsNot2x2Matrix("This is not a 2 by 2 matrix!"));
 		}
 
-		double const* const* matrix = sqrMatrix.getMatrix();
+		float const* const* matrix = sqrMatrix.getMatrix();
 		return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0];
 	}
 
-	double calculateDeterminantNxNMatrix(const SqrMatrix& sqrMatrix)
+	float calculateDeterminantNxNMatrix(const SqrMatrix& sqrMatrix)
 	{
-		double const* const* matrix = sqrMatrix.getMatrix();
+		float const* const* matrix = sqrMatrix.getMatrix();
 		if (sqrMatrix.getNumberOfRows() > NUMBER_OF_ROWS_IN_2X2_MATRIX)
 		{
-			double res = 0;
+			float res = 0;
 			int sign = 1;
 			for (int i = 0; i < sqrMatrix.getNumberOfRows(); ++i)
 			{
@@ -57,7 +57,7 @@ namespace exercise_9{
 		int subMatrixX = 0;
 		int subMatrixY = 0;
 
-		double const* const* matrix = sqrMatrix.getMatrix();
+		float const* const* matrix = sqrMatrix.getMatrix();
 		for (int i = 0; i < numberOfRows; ++i)
 		{
 			if (i != row)
@@ -134,7 +134,7 @@ namespace exercise_9{
 		return transpostedMatrix;
 	}
 
-	void multiplyEveryElementOfMatrixByGivenNumber(SqrMatrix& matrix, const double number)
+	void multiplyEveryElementOfMatrixByGivenNumber(SqrMatrix& matrix, const float number)
 	{
 		const int numberOfRows = matrix.getNumberOfRows();
 

@@ -16,7 +16,7 @@ namespace exercise_9{
 
 	struct SqrMatrix
 	{
-		double** data;
+		float** data;
 		const int numberOfRows;
 
 		SqrMatrix(const int size, bool randomVals = false)
@@ -25,10 +25,10 @@ namespace exercise_9{
 			std::default_random_engine e((unsigned int)time(0));
 			std::uniform_int_distribution<int> distribution(0,9);
 
-			data = new double* [numberOfRows];
+			data = new float* [numberOfRows];
 			for (int i = 0; i < numberOfRows; ++i)
 			{
-				data[i] = new double [numberOfRows];
+				data[i] = new float [numberOfRows];
 
 				for (int j = 0; j < numberOfRows; ++j)
 				{
@@ -67,7 +67,7 @@ namespace exercise_9{
 			return numberOfRows;
 		}
 
-		double const* const* getMatrix() const
+		float const* const* getMatrix() const
 		{
 			return data;
 		}
@@ -105,15 +105,15 @@ namespace exercise_9{
 	};
 
 	std::ostream& operator<<(std::ostream& o, const SqrMatrix& sqrMatrix);
-	double calculateDeterminant2x2Matrix(const SqrMatrix&);
-	double calculateDeterminantNxNMatrix(const SqrMatrix&);
+	float calculateDeterminant2x2Matrix(const SqrMatrix&);
+	float calculateDeterminantNxNMatrix(const SqrMatrix&);
 	SqrMatrix calculateMatrixOfMinorsForNxNMatrix(const SqrMatrix& sqrMatrix);
 	SqrMatrix calculateCofactorMatrixFromMatrixOfMinors(const SqrMatrix& matrixOfMinors);
 
 	SqrMatrix getTranspositionOfMatrix(const SqrMatrix& matrix);
 
 	SqrMatrix multiplyTwoSqrMatrices(const SqrMatrix& matrix1, const SqrMatrix& matrix2);
-	void multiplyEveryElementOfMatrixByGivenNumber(SqrMatrix& matrix, const double number);
+	void multiplyEveryElementOfMatrixByGivenNumber(SqrMatrix& matrix, const float number);
 
 	const SqrMatrix getSubMatrixWithoutColAndRow(const SqrMatrix&, const int row, const int col);
 
