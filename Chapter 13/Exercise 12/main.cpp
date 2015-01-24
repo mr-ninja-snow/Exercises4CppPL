@@ -6,6 +6,10 @@ namespace exercise = exercise_12;
 int main(int argc, const char* arfgv[])
 {
 
+	static_assert(exercise::DATA_BLOCK_SIZE == 2,   "This program doesn't support a data block that isn't equal to 64 bit (block size 2)");
+	static_assert(exercise::KEY_SIZE == 4,          "This program doesn't support a key that isn't equal to 128 bit (block size 4)");
+	static_assert(exercise::NUMBER_OF_ROUNDS >= 64, "The TEA will be easily cracked if the number of rounds is less then 64");
+
 	uint32_t key[exercise::KEY_SIZE] = {0};
 	uint32_t data[exercise::DATA_BLOCK_SIZE] = {0};
 

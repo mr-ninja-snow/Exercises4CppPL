@@ -20,10 +20,6 @@ namespace exercise_12{
 	const size_t KEY_SIZE         = 4;
 	const size_t NUMBER_OF_ROUNDS = 64;
 
-	// static_assert(DATA_BLOCK_SIZE != 2,  "This program doesn't support a data block that isn't equal to 64 bit (block size 2)");
-	// static_assert(KEY_SIZE != 4,         "This program doesn't support a key that isn't equal to 128 bit (block size 4)");
-	// static_assert(NUMBER_OF_ROUNDS < 64, "The TEA will be easily cracked if the number of rounds is less then 64");
-
 	void encrypt(uint32_t* plainText, uint32_t* key);
 	void decrypt(uint32_t* cipherText, uint32_t* key);
 
