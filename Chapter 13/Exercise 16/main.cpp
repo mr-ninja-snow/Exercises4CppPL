@@ -44,7 +44,12 @@ int main(int argc, char* argv[])
 
 	while (std::cin)
 	{
-		MacroProcessor::ProcessInput()
+		std::string line;
+		
+		while (getline(std::cin, line))
+		{
+			MacroProcessor::ProcessInput(line);
+		}
 		// Lexer::get_token();
 		// if (Lexer::curr_tok == Lexer::END) break;
 		// if (Lexer::curr_tok == Lexer::PRINT) continue;
