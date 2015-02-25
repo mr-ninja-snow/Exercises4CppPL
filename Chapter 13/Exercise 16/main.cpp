@@ -2,10 +2,6 @@
 
 #include "MacroProcessor.hpp"
 
-// #include "Parser.hpp"
-// #include "Lexer.hpp"
-// #include "Error.hpp"
-
 /*
 	A PLANT UML sequence diagram of the Macro Processor:
 	Bob ->> CIN: input string
@@ -37,45 +33,18 @@
 	deactivate MacroProcessor
 */
 
-// std::map<std::string,double> table;
-
 int main(int argc, char* argv[])
 {
+	std::string line;
 
-	while (std::cin)
+	do
 	{
-		std::string line;
-		
-		while (getline(std::cin, line))
-		{
-			MacroProcessor::ProcessInput(line);
-		}
-		// Lexer::get_token();
-		// if (Lexer::curr_tok == Lexer::END) break;
-		// if (Lexer::curr_tok == Lexer::PRINT) continue;
-		// std::cout << Parser::expr(false) << '\n';
+		std::cout << ">";
+		getline(std::cin, line)
+
+		MacroProcessor::ProcessInput(line);
 	}
+	while (std::cin);
 
-	return Error::no_of_errors;	
+	return 0;
 }
-
-// look into
-// const string hexdigits = "0123456789ABCDEF";
-// cout << "Enter a series of numbers between 0 and 15 separated by spaces. Hit ENTER when finished: " << endl;
-// string line;
-// string result;
-// if (getline(cin, line)) // get the whole line
-// {
-//     istringstream iss(result); // break them by spaces
-//     int i;
-//     while (iss >> i)
-//     {
-//         result += hexdigits[i];
-//         result += " ";
-//     }
-//     cout << "Your hex result:  " << result << endl;
-// }
-// else
-// {
-//     cout << "Error handling input!" << endl;
-// }

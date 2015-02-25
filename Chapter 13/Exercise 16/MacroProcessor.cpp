@@ -1,10 +1,5 @@
 #include "MacroProcessor.hpp"
 
-void MacroProcessor::ProcessInput(std::string inputString)
-{
-	std::cout << "Debug: removed all of the extra whitespace: " << reduce(inputString) << "\n";
-}
-
 namespace {
 
 	std::string trim(const std::string& str, const std::string& whitespace = " \t")
@@ -40,4 +35,9 @@ namespace {
 		return result;
 	}
 
+}
+
+void MacroProcessor::ProcessInput(std::string inputString)
+{
+	std::cout << "Debug: removed all of the extra whitespace: " << reduce(inputString) << "\n";
 }
