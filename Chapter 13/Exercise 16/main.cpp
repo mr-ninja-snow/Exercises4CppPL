@@ -3,6 +3,7 @@
 #include "MacroProcessor.hpp"
 
 /*
+OBSOLETE
 	A PLANT UML sequence diagram of the Macro Processor:
 	Bob ->> CIN: input string
 	note left: there will be no C++ syntax check; All of the input strings will be considered valid C++ code

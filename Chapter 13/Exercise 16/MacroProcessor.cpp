@@ -1,14 +1,18 @@
 #include "MacroProcessor.hpp"
+#include <iostream>
 #include <sstream> // std::stringstream
 #include <cctype> // std::isalpha
+#include <vector>
 #include <map>
+
 
 namespace {
 
 	enum
 	{
 		FIRST_TOKEN,
-		SECOND_TOKEN
+		SECOND_TOKEN,
+		THIRD_TOKEN
 	};
 
 	enum
@@ -16,11 +20,41 @@ namespace {
 		FIRST_CHAR
 	};
 
-	std::map<std::string, std::string> g_DefineMap{};
+	typedef std::map<std::string, std::string> macro_map_t;
+	macro_map_t g_DefineMap{};
+
+	void dump_map(const macro_map_t& map);
 
 	//------------------------------------------------------
 	//Macro Processor functions
 	//------------------------------------------------------
+
+	inline bool SaveMacro(std::vector<std::string>& tokens)
+	{
+		if (std::isalpha(tokens[SECOND_TOKEN][FIRST_CHAR]) && tokens.size() > 2)
+		{
+			std::cout << "Info : macro syntax is correct, saving macro..." << "\n";
+
+			std::string macroValue{tokens[THIRD_TOKEN]};
+			if (tokens.size() > 3)
+			{
+				for (int i = THIRD_TOKEN + 1; i < tokens.size(); ++i)
+				{
+					macroValue += " " +tokens[i] ;
+				}
+			}
+
+			g_DefineMap[tokens[SECOND_TOKEN]] = macroValue;
+
+			//debug map printout
+			dump_map(g_DefineMap);
+		}
+		else
+		{
+			std::cout << "Info : Syntax error in macro definition!\n";
+		}
+
+	}
 
 	bool ProcessMacro(std::vector<std::string>& tokens)
 	{
@@ -28,23 +62,15 @@ namespace {
 		{
 			std::cout << "Info : This is a macdo definition!\n";
 
-			if (std::isalpha(tokens[SECOND_TOKEN][FIRST_CHAR]) && tokens.size() > 2)
-			{
-				std::cout << "Info : macro syntax is correct, saving macro...";
-
-
-			}
-			else
-			{
-				std::cout << "Info : Syntax error in macdo definition!\n";
-			}
+			SaveMacro(tokens);
 		}
 		else
 		{
-			std::cout << "Info : This is NOT a macdo definition!\n";
+			std::cout << "Info : This is NOT a macro definition!\n";
 		}
 
 	}
+
 
 	//------------------------------------------------------
 	//Helper functions
@@ -97,6 +123,16 @@ namespace {
 		}
 
 		return result;
+	}
+
+	//reused (and moded) from answer to :http://stackoverflow.com/questions/1063453/how-to-display-map-contents
+	void dump_map(const macro_map_t& map)
+	{
+		std::cout << "Debug: Contents of map:\n";
+		for ( macro_map_t::const_iterator it = map.begin(); it != map.end(); it++)
+		{
+			std::cout << "\t\tKey: " << it->first << "\tValue: " << it->second << "\n";
+		}
 	}
 
 }
