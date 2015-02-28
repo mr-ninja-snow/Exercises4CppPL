@@ -9,11 +9,11 @@
 	CIN ->> MacroProcessor: ProcessInput
 	activate MacroProcessor
 	MacroProcessor -> MacroProcessor: RemoveExtraWhiteSpaces
-	MacroProcessor -> MacroProcessor: CheckIfMacroDefinition 
-	note right: check if line starts with '#'
+	MacroProcessor -> MacroProcessor: CheckIfMacroDefinition
+	note right: check if line starts with '#define '
 	alt is a macro definition
 		MacroProcessor -> MacroProcessor: CheckMacroSyntax 
-		note right: check if line has the "define" key word (with a space) after '#' 
+		note right: check if line has a token-string after the "define" key word
 		alt macro syntax correct
 			MacroProcessor -> MacroProcessor: SaveMacroDefinition
 			note right: save to std dictionary
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 	do
 	{
 		std::cout << ">";
-		getline(std::cin, line)
+		getline(std::cin, line);
 
 		MacroProcessor::ProcessInput(line);
 	}
