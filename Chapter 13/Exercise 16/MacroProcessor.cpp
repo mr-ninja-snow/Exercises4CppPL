@@ -1,7 +1,7 @@
 #include "MacroProcessor.hpp"
 #include <iostream>
 #include <sstream> // std::stringstream
-#include <cctype> // std::isalpha
+#include <cctype> // std::isalpha, std::isspace
 #include <vector>
 #include <map>
 
@@ -40,7 +40,14 @@ namespace {
 			{
 				for ( int i = THIRD_TOKEN + 1; i < tokens.size(); ++i )
 				{
-					macroValue += " " + tokens[i];
+					if (!std::isalpha(tokens[i][FIRST_CHAR]))
+					{
+						macroValue += tokens[i];
+					}
+					else
+					{
+						macroValue += " " + tokens[i];
+					}
 				}
 			}
 
@@ -72,7 +79,14 @@ namespace {
 
 		for ( int i = 0; i < tokens.size(); ++i )
 		{
-			macroExpansionResult += tokens[i] + " ";
+			if (!std::isalpha(tokens[i][FIRST_CHAR]))
+			{
+				macroExpansionResult += tokens[i];
+			}
+			else
+			{
+				macroExpansionResult += " " + tokens[i];
+			}
 		}
 
 		std::cout << "Info : Macro expansion result:\n" << "\t\t" << macroExpansionResult << "\n";
@@ -114,39 +128,48 @@ namespace {
 		return tokens;
 	}
 
+	// should be a template
+	inline void pushBack(std::vector<std::string>& vs, std::string s)
+	{
+		vs.push_back(s);
+		std::cout << "Debug: Extracted token from line: " << s << "\n";
+	}
+
 	std::vector<std::string> tokenizeString(std::string const& inputString)
 	{
-		std::string current;
+		std::string currentToken;
 		std::vector<std::string> tokens;
 
-		// for(; it != end; ++it)
 		for (int i = 0; i < inputString.size(); ++i)
 		{
 			if (isalpha(inputString[i]))
 			{
-				current.push_back(inputString[i]); // add this char to the current word
+				currentToken.push_back(inputString[i]);
 			}
 			else
 			{
-				if (current.size())
+				if (currentToken.size())
 				{
-					// push the current word in to the result list
-					tokens.push_back(current);
+					pushBack(tokens, currentToken);
+					if (!std::isspace(inputString[i]))
+					{
+						pushBack(tokens, std::string{inputString[i]});
+					}
 
-					std::cout << "Debug: Extracted token from line: " << current << "\n";
-
-					current.clear(); // next word
+					currentToken.clear();
 				}
 				else
 				{
 					if (inputString[i] == '#')
 					{
-						current.push_back(inputString[i]);
+						currentToken.push_back(inputString[i]);
 						continue;
 					}
-					tokens.push_back(std::string{inputString[i]});
 
-					std::cout << "Debug: Extracted token from line: " << inputString[i] << "\n";
+					if (!std::isspace(inputString[i]))
+					{
+						pushBack(tokens, std::string{inputString[i]});
+					}
 				}
 			}
 		}
