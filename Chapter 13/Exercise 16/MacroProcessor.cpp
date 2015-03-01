@@ -174,6 +174,11 @@ namespace {
 			}
 		}
 
+		if (currentToken.size())
+		{
+			pushBack(tokens, currentToken);
+		}
+
 		return tokens;
 	}
 
