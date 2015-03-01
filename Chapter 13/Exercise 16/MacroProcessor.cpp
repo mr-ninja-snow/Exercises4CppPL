@@ -12,7 +12,8 @@ namespace {
 	{
 		FIRST_TOKEN,
 		SECOND_TOKEN,
-		THIRD_TOKEN
+		THIRD_TOKEN,
+		FORTH_TOKEN
 	};
 
 	enum
@@ -24,6 +25,7 @@ namespace {
 	macro_map_t g_DefineMap{};
 
 	void dump_map(const macro_map_t& map);
+	std::vector<std::string> tokenizeString(std::string const& inputString);
 
 	//------------------------------------------------------
 	//Macro Processor functions
@@ -31,27 +33,20 @@ namespace {
 
 	inline void SaveMacro( std::vector<std::string>& tokens )
 	{
-		if ( std::isalpha(tokens[SECOND_TOKEN][FIRST_CHAR]) && tokens.size() > 2 )
+		if ( std::isalpha(tokens[THIRD_TOKEN][FIRST_CHAR]) && tokens.size() > 2 )
 		{
 			std::cout << "Info : macro syntax is correct, saving macro..." << "\n";
 
-			std::string macroValue{ tokens[THIRD_TOKEN] };
+			std::string macroValue{};
 			if ( tokens.size() > 3 )
 			{
-				for ( int i = THIRD_TOKEN + 1; i < tokens.size(); ++i )
+				for ( int i = FORTH_TOKEN + 1; i < tokens.size(); ++i )
 				{
-					if (!std::isalpha(tokens[i][FIRST_CHAR]))
-					{
-						macroValue += tokens[i];
-					}
-					else
-					{
-						macroValue += " " + tokens[i];
-					}
+					macroValue += tokens[i];
 				}
 			}
 
-			g_DefineMap[tokens[SECOND_TOKEN]] = macroValue;
+			g_DefineMap[tokens[THIRD_TOKEN]] = macroValue;
 
 			//debug map printout
 			dump_map(g_DefineMap);
@@ -66,30 +61,35 @@ namespace {
 	inline void ExpandMacroInUse( std::vector<std::string>& tokens )
 	{
 		std::string macroExpansionResult{};
+		bool foundMacro;
 
-		//vstepano need to tokenise even more
-
-		for ( std::vector<std::string>::iterator itr = tokens.begin(); itr != tokens.end(); ++itr )
+		do
 		{
-			if ( g_DefineMap.find(*itr) != g_DefineMap.end() )
+			foundMacro = false;
+
+			for ( std::vector<std::string>::iterator itr = tokens.begin(); itr != tokens.end(); ++itr )
 			{
-				*itr = g_DefineMap[*itr];
+				if ( g_DefineMap.find(*itr) != g_DefineMap.end() )
+				{
+					*itr = g_DefineMap[*itr];
+					foundMacro = true;
+				}
 			}
-		}
 
-		for ( int i = 0; i < tokens.size(); ++i )
-		{
-			if (!std::isalpha(tokens[i][FIRST_CHAR]))
+			for ( int i = 0; i < tokens.size(); ++i )
 			{
 				macroExpansionResult += tokens[i];
 			}
-			else
-			{
-				macroExpansionResult += " " + tokens[i];
-			}
-		}
 
-		std::cout << "Info : Macro expansion result:\n" << "\t\t" << macroExpansionResult << "\n";
+			std::cout << "Info : Macro expansion result:\n" << "\t\t" << macroExpansionResult << "\n";
+
+			if (foundMacro)
+			{
+				tokens = tokenizeString(macroExpansionResult);
+			}
+			macroExpansionResult.clear();
+		}
+		while (foundMacro);
 	}
 
 	bool ProcessMacro( std::vector<std::string>& tokens )
@@ -113,21 +113,6 @@ namespace {
 	//------------------------------------------------------
 	//Helper functions
 	//------------------------------------------------------
-	std::vector<std::string> tokenizeStringBySpace( std::string& inputString )
-	{
-		std::vector<std::string> tokens{};
-		std::stringstream ss{inputString};
-		std::string s{};
-
-		while (getline( ss, s, ' ') )
-		{
-			tokens.push_back( s) ;
-			std::cout << "Debug: Extracted token from line: " << s << "\n";
-		}
-
-		return tokens;
-	}
-
 	// should be a template
 	inline void pushBack(std::vector<std::string>& vs, std::string s)
 	{
@@ -151,10 +136,7 @@ namespace {
 				if (currentToken.size())
 				{
 					pushBack(tokens, currentToken);
-					if (!std::isspace(inputString[i]))
-					{
-						pushBack(tokens, std::string{inputString[i]});
-					}
+					pushBack(tokens, std::string{inputString[i]});
 
 					currentToken.clear();
 				}
@@ -166,10 +148,7 @@ namespace {
 						continue;
 					}
 
-					if (!std::isspace(inputString[i]))
-					{
-						pushBack(tokens, std::string{inputString[i]});
-					}
+					pushBack(tokens, std::string{inputString[i]});
 				}
 			}
 		}

@@ -1,0 +1,3 @@
+#define test (max+1)
+#define max 999
+test

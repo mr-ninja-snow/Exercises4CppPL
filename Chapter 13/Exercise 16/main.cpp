@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "MacroProcessor.hpp"
+#include <fstream>
 
 /*
 OBSOLETE
@@ -36,6 +37,7 @@ OBSOLETE
 
 int main(int argc, char* argv[])
 {
+	/*regular input
 	std::string line;
 
 	do
@@ -45,7 +47,19 @@ int main(int argc, char* argv[])
 
 		MacroProcessor::ProcessInput(line);
 	}
-	while (std::cin);
+	while (std::cin);*/
+
+	std::string line;
+	std::ifstream infile("input.txt");
+
+	while (std::getline(infile, line))
+	{
+		MacroProcessor::ProcessInput(line);
+
+		std::cin.ignore();
+	}
+
+	std::cout << "Info : Reached end of input file\n";
 
 	return 0;
 }
