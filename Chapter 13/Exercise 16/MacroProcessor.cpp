@@ -21,6 +21,11 @@ namespace {
 		FIRST_CHAR
 	};
 
+	enum
+	{
+		THREE_TOKENS = 3
+	};
+
 	typedef std::map<std::string, std::string> macro_map_t;
 	macro_map_t g_DefineMap{};
 
@@ -33,27 +38,91 @@ namespace {
 
 	inline void SaveMacro( std::vector<std::string>& tokens )
 	{
-		if ( std::isalpha(tokens[THIRD_TOKEN][FIRST_CHAR]) && tokens.size() > 2 )
+		if ( tokens[SECOND_TOKEN][FIRST_CHAR] == '(' && tokens.size() > THREE_TOKENS )
 		{
-			std::cout << "Info : macro syntax is correct, saving macro..." << "\n";
+			std::cout << "Info : macro syntax is correct, saving macro with parameters..." << "\n";
 
-			std::string macroValue{};
-			if ( tokens.size() > 3 )
+			std::vector<std::string> parameterNames{};
+
+			for (int i = THIRD_TOKEN;; ++i)
 			{
-				for ( int i = FORTH_TOKEN + 1; i < tokens.size(); ++i )
+				bool readyForNextParam{true};
+
+				// if (tokens[i][FIRST_CHAR] == ')')
+				// {
+				// 	break;
+				// }
+
+				// if (tokens[i][FIRST_CHAR] == ')')
+				// {
+				// 	break;
+				// }
+
+				switch(tokens[i][FIRST_CHAR])
 				{
-					macroValue += tokens[i];
+				case ')':
+					{
+						//[todo] @VS: check if all params are used
+						//[todo] @VS: replace all params with there def order
+						//[todo] @VS: save to map function
+						return;
+					}
+				case ',':
+					{
+						if (!readyForNextParam)
+						{
+							readyForNextParam = true;
+							continue;
+						}
+						else
+						{
+							std::cout << "Error : Syntax error in macro definition! Expected ',', instead received next parameter.\n";
+							return;
+						}
+					}
+				default:
+					{
+						break;
+					}
+				};
+
+				if ( std::isalpha(tokens[i][FIRST_CHAR]) && readyForNextParam)
+				{
+					parameterNames.push_back(tokens[i]);
+					readyForNextParam = false;
+					continue;
+				}
+				else
+				{
+					std::cout << "Error : Syntax error in macro definition! Expected ',', instead received next parameter.\n";
+					return;
 				}
 			}
-
-			g_DefineMap[tokens[THIRD_TOKEN]] = macroValue;
-
-			//debug map printout
-			dump_map(g_DefineMap);
 		}
 		else
 		{
-			std::cout << "Info : Syntax error in macro definition!\n";
+			if ( std::isalpha(tokens[THIRD_TOKEN][FIRST_CHAR]) && tokens.size() > THREE_TOKENS )
+			{
+				std::cout << "Info : macro syntax is correct, saving macro..." << "\n";
+
+				std::string macroValue{};
+				if ( tokens.size() > 3 )
+				{
+					for ( int i = FORTH_TOKEN + 1; i < tokens.size(); ++i )
+					{
+						macroValue += tokens[i];
+					}
+				}
+
+				g_DefineMap[tokens[THIRD_TOKEN]] = macroValue;
+
+				//debug map printout
+				dump_map(g_DefineMap);
+			}
+			else
+			{
+				std::cout << "Error : Syntax error in macro definition!\n";
+			}
 		}
 
 	}
