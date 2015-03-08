@@ -8,12 +8,14 @@
 
 namespace {
 
+	//@VS THIS LOOKS LIKE SH*T
 	enum
 	{
 		FIRST_TOKEN,
 		SECOND_TOKEN,
 		THIRD_TOKEN,
-		FORTH_TOKEN
+		FORTH_TOKEN,
+		FIFTH_TOKEN
 	};
 
 	enum
@@ -36,68 +38,73 @@ namespace {
 	//Macro Processor functions
 	//------------------------------------------------------
 
-	inline void SaveMacro( std::vector<std::string>& tokens )
+	inline void SaveMacroWithParams( std::vector<std::string>& tokens )
 	{
-		if ( tokens[SECOND_TOKEN][FIRST_CHAR] == '(' && tokens.size() > THREE_TOKENS )
+		std::cout << "Info : macro syntax is correct, saving macro with parameters..." << "\n";
+
+		std::vector<std::string> parameterNames{};
+
+		for (int i = FIFTH_TOKEN;; ++i)
 		{
-			std::cout << "Info : macro syntax is correct, saving macro with parameters..." << "\n";
+			bool readyForNextParam{true};
 
-			std::vector<std::string> parameterNames{};
-
-			for (int i = THIRD_TOKEN;; ++i)
+			switch(tokens[i][FIRST_CHAR])
 			{
-				bool readyForNextParam{true};
-
-				// if (tokens[i][FIRST_CHAR] == ')')
-				// {
-				// 	break;
-				// }
-
-				// if (tokens[i][FIRST_CHAR] == ')')
-				// {
-				// 	break;
-				// }
-
-				switch(tokens[i][FIRST_CHAR])
+			case ')':
 				{
-				case ')':
-					{
-						//[todo] @VS: check if all params are used
-						//[todo] @VS: replace all params with there def order
-						//[todo] @VS: save to map function
-						return;
-					}
-				case ',':
-					{
-						if (!readyForNextParam)
-						{
-							readyForNextParam = true;
-							continue;
-						}
-						else
-						{
-							std::cout << "Error : Syntax error in macro definition! Expected ',', instead received next parameter.\n";
-							return;
-						}
-					}
-				default:
-					{
-						break;
-					}
-				};
+					//[todo] @VS: check if all params are used
+					std::vector<std::string>::const_iterator firstElem = tokens.begin() + i + 1;
+					std::vector<std::string>::const_iterator lastElem = tokens.end();
+					std::vector<std::string> paramTokensInUse{firstElem, lastElem};
 
-				if ( std::isalpha(tokens[i][FIRST_CHAR]) && readyForNextParam)
-				{
-					parameterNames.push_back(tokens[i]);
-					readyForNextParam = false;
-					continue;
-				}
-				else
-				{
-					std::cout << "Error : Syntax error in macro definition! Expected ',', instead received next parameter.\n";
+					std::cout << "Info :\t\t\tParams in use\n";
+					for (auto token : paramTokensInUse)
+					{
+						std::cout << "\t\t\t\t" << token << "\n";
+					}
+					//[todo] @VS: replace all params with there def order
+					//[todo] @VS: save to map function
 					return;
 				}
+			case ',':
+				{
+					if (!readyForNextParam)
+					{
+						readyForNextParam = true;
+						continue;
+					}
+					else
+					{
+						std::cout << "Error : Syntax error in macro definition! Expected ',', instead received next parameter.\n";
+						return;
+					}
+				}
+			default:
+				{
+					break;
+				}
+			};
+
+			if ( std::isalpha(tokens[i][FIRST_CHAR]) && readyForNextParam)
+			{
+				parameterNames.push_back(tokens[i]);
+				readyForNextParam = false;
+				continue;
 			}
+			else
+			{
+				std::cout << "Error : Syntax error in macro definition! Expected ',', instead received next parameter.\n";
+				return;
+			}
+		}
+	}
+
+	inline void SaveMacro( std::vector<std::string>& tokens )
+	{
+		if ( tokens[FORTH_TOKEN][FIRST_CHAR] == '(' && tokens.size() > THREE_TOKENS )
+		{
+			SaveMacroWithParams(tokens);
+
 		}
 		else
 		{
