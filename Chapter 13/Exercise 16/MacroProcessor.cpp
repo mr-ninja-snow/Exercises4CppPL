@@ -1,4 +1,6 @@
 #include "MacroProcessor.hpp"
+#include <algorithm> // std::find
+#include <iterator> // std::distance
 #include <iostream>
 #include <sstream> // std::stringstream
 #include <cctype> // std::isalpha, std::isspace
@@ -44,30 +46,76 @@ namespace {
 
 		std::vector<std::string> parameterNames{};
 
+		bool readyForNextParam{true};
+
 		for (int i = FIFTH_TOKEN;; ++i)
 		{
-			bool readyForNextParam{true};
+
+			std::cout << "Info :" << readyForNextParam << " '" << tokens[i][FIRST_CHAR] << "'\n";
 
 			switch(tokens[i][FIRST_CHAR])
 			{
 			case ')':
 				{
-					//[todo] @VS: check if all params are used
+					//[todo] @VS: replace all params with there def order
 					std::vector<std::string>::const_iterator firstElem = tokens.begin() + i + 1;
 					std::vector<std::string>::const_iterator lastElem = tokens.end();
 					std::vector<std::string> paramTokensInUse{firstElem, lastElem};
 
-					std::cout << "Info :\t\t\tParams in use\n";
+					char paramUsageMask{0};
+
+					// std::cout << "Info :\t\t\tParams in use\n";
+					for (std::string& token : paramTokensInUse)
+					{
+						// std::cout << "\t\t\t\t" << token << "\n";
+						if (token.size() > 1)
+						{
+							
+							std::vector<std::string>::iterator it = std::find(parameterNames.begin(), parameterNames.end(), token);
+
+							//std::vector<std::string>::iterator it;
+
+							// auto it = std::find(parameterNames.begin(), parameterNames.end(), token);
+
+							if (it != parameterNames.end())
+							//if( std::find(parameterNames.begin(), parameterNames.end(), "token") != parameterNames.end())
+							{
+								int pos = std::distance(parameterNames.begin(), it);
+								// // token = std::string{"param_"} + std::string{pos};
+								
+								std::ostringstream stringStream;
+								stringStream << "param_" << pos;
+								
+								token = std::string{stringStream.str()};
+								paramUsageMask |= 1 << pos;
+							}
+
+						}
+					}
+
+					std::cout << "Debug :\t\t\tParams in use\n";
 					for (auto token : paramTokensInUse)
 					{
 						std::cout << "\t\t\t\t" << token << "\n";
 					}
-					//[todo] @VS: replace all params with there def order
+
+					//[todo] @VS: check if all params are used
+					for (int i = 0; i < parameterNames.size(); ++i)
+					{
+						if ( !(paramUsageMask & (1 << i)) )
+						{
+							std::cout << "Error : Syntax error in macro definition! Not all of the parameters are used in the definition.\n";
+						}
+					}
+
 					//[todo] @VS: save to map function
+					
 					return;
 				}
 			case ',':
 				{
+
+					std::cout << "Info : comma" << "\n";
 					if (!readyForNextParam)
 					{
 						readyForNextParam = true;
@@ -79,6 +127,10 @@ namespace {
 						return;
 					}
 				}
+			case ' ':
+				{
+					continue;
+				}
 			default:
 				{
 					break;
@@ -87,8 +139,11 @@ namespace {
 
 			if ( std::isalpha(tokens[i][FIRST_CHAR]) && readyForNextParam)
 			{
+				std::cout << "Debug : Save " << tokens[i] << "\n";
+
 				parameterNames.push_back(tokens[i]);
 				readyForNextParam = false;
+				// std::cout << "Info :" << readyForNextParam << "\n";
 				continue;
 			}
 			else
