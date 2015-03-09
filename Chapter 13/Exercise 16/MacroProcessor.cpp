@@ -24,6 +24,11 @@ namespace {
 
 	enum
 	{
+		MACRO_NAME_LOCATION = THIRD_TOKEN
+	};
+
+	enum
+	{
 		FIRST_CHAR
 	};
 
@@ -84,13 +89,28 @@ namespace {
 		{
 			if ( !(paramUsageMask & (1 << i)) )
 			{
-				//std::cout << "Error : Syntax error in macro definition! Not all of the parameters are used in the definition.\n";
 				throw std::runtime_error(std::string{"Error : Syntax error in macro definition! Not all of the parameters are used in the definition.\n"});
-				// return;
 			}
 		}
 
 		return paramTokensInUse;
+	}
+
+	inline void writeMacroToMap(const std::string& macroName, const size_t numberOfParams, std::vector<std::string>& paramTokensInUse)
+	{
+		std::ostringstream stringStream;
+		stringStream << macroName << "(" << numberOfParams << ")";
+
+		std::string macroValue{};
+		for (const std::string& token : paramTokensInUse)
+		{
+			macroValue += token;
+		}
+
+		g_DefineMap[std::string{stringStream.str()}] = macroValue;
+
+		//debug map printout
+		dump_map(g_DefineMap);
 	}
 
 	inline void SaveMacroWithParams( std::vector<std::string>& tokens )
@@ -113,87 +133,29 @@ namespace {
 					{
 						std::vector<std::string> paramTokensInUse {ProcessMacroDefinition(tokens.begin() + i + 1, tokens.end(), parameterNames)};
 
-						//[todo] @VS: save to map function
-						std::ostringstream stringStream;
-						stringStream << tokens[THIRD_TOKEN] << "(" << parameterNames.size() << ")";
+						writeMacroToMap(tokens[MACRO_NAME_LOCATION], parameterNames.size(), paramTokensInUse);
+						// //[todo] @VS: save to map function
+						// std::ostringstream stringStream;
+						// stringStream << tokens[THIRD_TOKEN] << "(" << parameterNames.size() << ")";
 
-						std::string macroValue{};
-						for (const std::string& token : paramTokensInUse)
-						{
-							macroValue += token;
-						}
+						// std::string macroValue{};
+						// for (const std::string& token : paramTokensInUse)
+						// {
+						// 	macroValue += token;
+						// }
 
-						g_DefineMap[std::string{stringStream.str()}] = macroValue;
+						// g_DefineMap[std::string{stringStream.str()}] = macroValue;
 
-						//debug map printout
-						dump_map(g_DefineMap);
+						// //debug map printout
+						// dump_map(g_DefineMap);
 
+						return;
 					}
 					catch(const std::runtime_error& error)
 					{
 						std::cout << error.what();
 						std::exit(ERROR_EXIT_CODE);
 					}
-					// @VS: replace all params with there def order
-					// std::vector<std::string>::const_iterator firstElemOfDef = tokens.begin() + i + 1;
-					// std::vector<std::string>::const_iterator lastElemOfDef = tokens.end();
-					// std::vector<std::string> paramTokensInUse{firstElemOfDef, lastElemOfDef};
-
-					// char paramUsageMask{0};
-
-					// for (std::string& token : paramTokensInUse)
-					// {
-					// 	if (token.size() > 1)
-					// 	{
-					// 		std::vector<std::string>::iterator it = std::find(parameterNames.begin(), parameterNames.end(), token);
-
-					// 		if (it != parameterNames.end())
-					// 		{
-					// 			int pos = std::distance(parameterNames.begin(), it);
-
-					// 			std::ostringstream stringStream;
-					// 			stringStream << "param_" << pos;
-
-					// 			token = std::string{stringStream.str()};
-					// 			paramUsageMask |= 1 << pos;
-					// 		}
-					// 	}
-					// }
-
-					// std::cout << "Debug :\t\t\tParams in use\n";
-					// for (auto token : paramTokensInUse)
-					// {
-					// 	std::cout << "\t\t\t\t" << token << "\n";
-					// }
-
-					// //@VS: check if all params are used
-					// for (int i = 0; i < parameterNames.size(); ++i)
-					// {
-					// 	if ( !(paramUsageMask & (1 << i)) )
-					// 	{
-					// 		std::cout << "Error : Syntax error in macro definition! Not all of the parameters are used in the definition.\n";
-					// 		return;
-					// 	}
-					// }
-
-					// //[todo] @VS: save to map function
-
-					// std::ostringstream stringStream;
-					// stringStream << tokens[THIRD_TOKEN] << "(" << parameterNames.size() << ")";
-
-					// std::string macroValue{};
-					// for (const std::string& token : paramTokensInUse)
-					// {
-					// 	macroValue += token;
-					// }
-
-					// g_DefineMap[std::string{stringStream.str()}] = macroValue;
-
-					// //debug map printout
-					// dump_map(g_DefineMap);
-
-
-					return;
 				}
 			case ',':
 				{
@@ -249,7 +211,7 @@ namespace {
 		}
 		else
 		{
-			if ( std::isalpha(tokens[THIRD_TOKEN][FIRST_CHAR]) && tokens.size() > THREE_TOKENS )
+			if ( std::isalpha(tokens[MACRO_NAME_LOCATION][FIRST_CHAR]) && tokens.size() > THREE_TOKENS )
 			{
 				std::cout << "Info : macro syntax is correct, saving macro..." << "\n";
 
@@ -262,7 +224,7 @@ namespace {
 					}
 				}
 
-				g_DefineMap[tokens[THIRD_TOKEN]] = macroValue;
+				g_DefineMap[tokens[MACRO_NAME_LOCATION]] = macroValue;
 
 				//debug map printout
 				dump_map(g_DefineMap);
