@@ -25,6 +25,7 @@ namespace {
 
 	enum
 	{
+		SKIP_SPACE_CHAR = 1,
 		MACRO_NAME_LOCATION = THIRD_TOKEN,
 		TOKEN_AFTER_PARENTHESIS = FIFTH_TOKEN
 	};
@@ -67,7 +68,7 @@ namespace {
 	// @VS comment: don't like the types of params that are passed; not really self documenting
 	inline std::vector<std::string> ProcessMacroDefinition(std::vector<std::string>::const_iterator firstElemOfDef, std::vector<std::string>::const_iterator lastElemOfDef, std::vector<std::string>& parameterNames)
 	{
-		std::vector<std::string> paramTokensInUse{firstElemOfDef, lastElemOfDef};
+		std::vector<std::string> paramTokensInUse{firstElemOfDef + SKIP_SPACE_CHAR, lastElemOfDef};
 
 		char paramUsageMask{0};
 
@@ -93,7 +94,7 @@ namespace {
 		// std::cout << "Debug :\t\t\tParams in use\n";
 		for (auto token : paramTokensInUse)
 		{
-			std::cout << "\t\t\t\t" << token << "\n";
+			std::cout << "\t\t\t\t'" << token << "'\n";
 		}
 
 		for (int i = 0; i < parameterNames.size(); ++i)
@@ -298,6 +299,37 @@ namespace {
 		tokens = std::move(newTokens);
 	}
 
+	inline bool LookForMacroUsage( std::vector<std::string>& tokens )
+	{
+		for ( std::vector<std::string>::iterator itr = tokens.begin(); itr != tokens.end(); ++itr )
+		{
+
+			if ( g_DefineMap.find(*itr) != g_DefineMap.end() )
+			{
+				*itr = g_DefineMap[*itr];
+
+				return true;
+			}
+			else
+			{
+				if ( (itr + 1 != tokens.end()) && (*(itr + 1))[FIRST_CHAR] == '(')
+				{
+					std::ostringstream stringStream;
+					stringStream << *itr << '(';
+
+					if ( g_DefineWithParamMap.find(stringStream.str()) != g_DefineWithParamMap.end() )
+					{
+						ExpandMacroWithParams( tokens, stringStream.str(), itr);
+
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
 	inline void ExpandMacroInUse( std::vector<std::string>& tokens )
 	{
 		std::string macroExpansionResult{};
@@ -305,80 +337,7 @@ namespace {
 
 		do
 		{
-			foundMacro = false;
-
-			for ( std::vector<std::string>::iterator itr = tokens.begin(); itr != tokens.end(); ++itr )
-			{
-				if ( g_DefineMap.find(*itr) != g_DefineMap.end() )
-				{
-					*itr = g_DefineMap[*itr];
-					foundMacro = true;
-
-					break;
-				}
-				else
-				{
-					if ((*(itr + 1))[FIRST_CHAR] == '(')
-					{
-						std::ostringstream stringStream;
-						stringStream << *itr << '(';
-						
-
-						if ( g_DefineWithParamMap.find(stringStream.str()) != g_DefineWithParamMap.end() )
-						{
-							ExpandMacroWithParams( tokens, stringStream.str(), itr);
-							// std::cout << "Debug : found " << stringStream.str() << "\n";
-
-							// std::vector<std::string>::iterator itrParamEnd = std::find(++itrParamBegin, tokens.end(), std::string{')'});
-							// std::vector<std::string> macroParams{++itrParamBegin, itrParamEnd };
-
-							// macroWParams_s mwp = g_DefineWithParamMap[stringStream.str()];
-							// std::vector<std::string> localMacroExpansionResult = mwp.paramTokensInUse;
-
-							// std::string param{};
-							// int parameterIndex{0};
-							// for(std::string& token : macroParams)
-							// {
-							// 	if (token[FIRST_CHAR] == ' ')
-							// 	{
-							// 		continue;
-							// 	}
-
-							// 	if (token[FIRST_CHAR] != ',')
-							// 	{
-							// 		param += token;
-							// 	}
-							// 	else
-							// 	{
-							// 		SubstetuteMacroParams(param, parameterIndex, localMacroExpansionResult);
-							// 	}
-							// }
-
-							// SubstetuteMacroParams(param, parameterIndex, localMacroExpansionResult);
-
-							// // std::cout << "Debug :\t\t\tlocal Macro Expansion Result\n";
-							// for (auto token : localMacroExpansionResult)
-							// {
-							// 	std::cout << "\t\t\t\t" << token << "\n";
-							// }
-
-							// //replace macro in tokens
-							// std::vector<std::string> newTokens{tokens.begin(), itr};
-							// newTokens.insert(newTokens.end(), localMacroExpansionResult.begin(), localMacroExpansionResult.end());
-
-							// if (itrParamEnd + 1 != tokens.end())
-							// {
-							// 	newTokens.insert(newTokens.end(), itrParamEnd + 1, tokens.end());
-							// }
-
-							// tokens = std::move(newTokens);
-							foundMacro = true;
-
-							break;
-						}
-					}
-				}
-			}
+			foundMacro = LookForMacroUsage(tokens);
 
 			for ( int i = 0; i < tokens.size(); ++i )
 			{
@@ -391,6 +350,7 @@ namespace {
 			{
 				tokens = tokenizeString(macroExpansionResult);
 			}
+
 			macroExpansionResult.clear();
 		}
 		while (foundMacro);
