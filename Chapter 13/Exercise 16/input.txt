@@ -1,1 +1,1 @@
-#define test(max, min) (max+1*min*min)
+#define test(max, min, pos) (max+1*min*min)

@@ -1,8 +1,10 @@
 #include "MacroProcessor.hpp"
+#include <stdexcept> // std::runtime_error
 #include <algorithm> // std::find
 #include <iterator> // std::distance
 #include <iostream>
 #include <sstream> // std::stringstream
+#include <cstdlib> // std::exit()
 #include <cctype> // std::isalpha, std::isspace
 #include <vector>
 #include <map>
@@ -10,7 +12,7 @@
 
 namespace {
 
-	//@VS THIS LOOKS LIKE SH*T
+	//@VS comment: THIS LOOKS LIKE SH*T
 	enum
 	{
 		FIRST_TOKEN,
@@ -25,9 +27,15 @@ namespace {
 		FIRST_CHAR
 	};
 
+	//@VS comment: THIS LOOKS LIKE SH*T
 	enum
 	{
 		THREE_TOKENS = 3
+	};
+
+	enum
+	{
+		ERROR_EXIT_CODE = 33
 	};
 
 	typedef std::map<std::string, std::string> macro_map_t;
@@ -39,6 +47,51 @@ namespace {
 	//------------------------------------------------------
 	//Macro Processor functions
 	//------------------------------------------------------
+
+	// @VS comment: don't like the types of params that are passed; not really self documenting
+	inline std::vector<std::string> ProcessMacroDefinition(std::vector<std::string>::const_iterator firstElemOfDef, std::vector<std::string>::const_iterator lastElemOfDef, std::vector<std::string>& parameterNames)
+	{
+		std::vector<std::string> paramTokensInUse{firstElemOfDef, lastElemOfDef};
+
+		char paramUsageMask{0};
+
+		for (std::string& token : paramTokensInUse)
+		{
+			if (token.size() > 1)
+			{
+				std::vector<std::string>::iterator it = std::find(parameterNames.begin(), parameterNames.end(), token);
+
+				if (it != parameterNames.end())
+				{
+					int pos = std::distance(parameterNames.begin(), it);
+
+					std::ostringstream stringStream;
+					stringStream << "param_" << pos;
+
+					token = std::string{stringStream.str()};
+					paramUsageMask |= 1 << pos;
+				}
+			}
+		}
+
+		std::cout << "Debug :\t\t\tParams in use\n";
+		for (auto token : paramTokensInUse)
+		{
+			std::cout << "\t\t\t\t" << token << "\n";
+		}
+
+		for (int i = 0; i < parameterNames.size(); ++i)
+		{
+			if ( !(paramUsageMask & (1 << i)) )
+			{
+				//std::cout << "Error : Syntax error in macro definition! Not all of the parameters are used in the definition.\n";
+				throw std::runtime_error(std::string{"Error : Syntax error in macro definition! Not all of the parameters are used in the definition.\n"});
+				// return;
+			}
+		}
+
+		return paramTokensInUse;
+	}
 
 	inline void SaveMacroWithParams( std::vector<std::string>& tokens )
 	{
@@ -52,91 +105,98 @@ namespace {
 		for (int i = FIFTH_TOKEN;; ++i)
 		{
 
-			std::cout << "Info :" << readyForNextParam << " '" << tokens[i][FIRST_CHAR] << "'\n";
-
 			switch(tokens[i][FIRST_CHAR])
 			{
 			case ')':
 				{
+					try
+					{
+						std::vector<std::string> paramTokensInUse {ProcessMacroDefinition(tokens.begin() + i + 1, tokens.end(), parameterNames)};
+
+						//[todo] @VS: save to map function
+						std::ostringstream stringStream;
+						stringStream << tokens[THIRD_TOKEN] << "(" << parameterNames.size() << ")";
+
+						std::string macroValue{};
+						for (const std::string& token : paramTokensInUse)
+						{
+							macroValue += token;
+						}
+
+						g_DefineMap[std::string{stringStream.str()}] = macroValue;
+
+						//debug map printout
+						dump_map(g_DefineMap);
+
+					}
+					catch(const std::runtime_error& error)
+					{
+						std::cout << error.what();
+						std::exit(ERROR_EXIT_CODE);
+					}
 					// @VS: replace all params with there def order
-					std::vector<std::string>::const_iterator firstElemOfDef = tokens.begin() + i + 1;
-					std::vector<std::string>::const_iterator lastElemOfDef = tokens.end();
-					std::vector<std::string> paramTokensInUse{firstElemOfDef, lastElemOfDef};
+					// std::vector<std::string>::const_iterator firstElemOfDef = tokens.begin() + i + 1;
+					// std::vector<std::string>::const_iterator lastElemOfDef = tokens.end();
+					// std::vector<std::string> paramTokensInUse{firstElemOfDef, lastElemOfDef};
 
-					// //[todo] @VS: find first whitespace and copy from there
-					// std::vector<std::string> macroName{tokens.begin() + 1, firstElemOfDef};
+					// char paramUsageMask{0};
 
-					char paramUsageMask{0};
+					// for (std::string& token : paramTokensInUse)
+					// {
+					// 	if (token.size() > 1)
+					// 	{
+					// 		std::vector<std::string>::iterator it = std::find(parameterNames.begin(), parameterNames.end(), token);
 
-					// std::cout << "Info :\t\t\tParams in use\n";
-					for (std::string& token : paramTokensInUse)
-					{
-						// std::cout << "\t\t\t\t" << token << "\n";
-						if (token.size() > 1)
-						{
-							
-							std::vector<std::string>::iterator it = std::find(parameterNames.begin(), parameterNames.end(), token);
+					// 		if (it != parameterNames.end())
+					// 		{
+					// 			int pos = std::distance(parameterNames.begin(), it);
 
-							//std::vector<std::string>::iterator it;
+					// 			std::ostringstream stringStream;
+					// 			stringStream << "param_" << pos;
 
-							// auto it = std::find(parameterNames.begin(), parameterNames.end(), token);
+					// 			token = std::string{stringStream.str()};
+					// 			paramUsageMask |= 1 << pos;
+					// 		}
+					// 	}
+					// }
 
-							if (it != parameterNames.end())
-							//if( std::find(parameterNames.begin(), parameterNames.end(), "token") != parameterNames.end())
-							{
-								int pos = std::distance(parameterNames.begin(), it);
-								// // token = std::string{"param_"} + std::string{pos};
-								
-								std::ostringstream stringStream;
-								stringStream << "param_" << pos;
-								
-								token = std::string{stringStream.str()};
-								paramUsageMask |= 1 << pos;
-							}
+					// std::cout << "Debug :\t\t\tParams in use\n";
+					// for (auto token : paramTokensInUse)
+					// {
+					// 	std::cout << "\t\t\t\t" << token << "\n";
+					// }
 
-						}
-					}
+					// //@VS: check if all params are used
+					// for (int i = 0; i < parameterNames.size(); ++i)
+					// {
+					// 	if ( !(paramUsageMask & (1 << i)) )
+					// 	{
+					// 		std::cout << "Error : Syntax error in macro definition! Not all of the parameters are used in the definition.\n";
+					// 		return;
+					// 	}
+					// }
 
-					std::cout << "Debug :\t\t\tParams in use\n";
-					for (auto token : paramTokensInUse)
-					{
-						std::cout << "\t\t\t\t" << token << "\n";
-					}
+					// //[todo] @VS: save to map function
 
-					//@VS: check if all params are used
-					for (int i = 0; i < parameterNames.size(); ++i)
-					{
-						if ( !(paramUsageMask & (1 << i)) )
-						{
-							std::cout << "Error : Syntax error in macro definition! Not all of the parameters are used in the definition.\n";
-							return;
-						}
-					}
+					// std::ostringstream stringStream;
+					// stringStream << tokens[THIRD_TOKEN] << "(" << parameterNames.size() << ")";
 
-					//[todo] @VS: save to map function
+					// std::string macroValue{};
+					// for (const std::string& token : paramTokensInUse)
+					// {
+					// 	macroValue += token;
+					// }
 
-					//vstepano create inline helper function
-					std::ostringstream stringStream;
-					stringStream << tokens[THIRD_TOKEN] << "(" << parameterNames.size() << ")";
+					// g_DefineMap[std::string{stringStream.str()}] = macroValue;
 
-					std::string macroValue{};
-					for (const std::string& token : paramTokensInUse)
-					{
-						macroValue += token;
-					}
-
-					g_DefineMap[std::string{stringStream.str()}] = macroValue;
-
-					//debug map printout
-					dump_map(g_DefineMap);
+					// //debug map printout
+					// dump_map(g_DefineMap);
 
 
 					return;
 				}
 			case ',':
 				{
-
-					std::cout << "Info : comma" << "\n";
 					if (!readyForNextParam)
 					{
 						readyForNextParam = true;
@@ -170,7 +230,6 @@ namespace {
 				tokens[i] = std::string{stringStream.str()};
 
 				readyForNextParam = false;
-				// std::cout << "Info :" << readyForNextParam << "\n";
 				continue;
 			}
 			else
