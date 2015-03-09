@@ -24,7 +24,8 @@ namespace {
 
 	enum
 	{
-		MACRO_NAME_LOCATION = THIRD_TOKEN
+		MACRO_NAME_LOCATION = THIRD_TOKEN,
+		TOKEN_AFTER_PARENTHESIS = FIFTH_TOKEN
 	};
 
 	enum
@@ -45,6 +46,15 @@ namespace {
 
 	typedef std::map<std::string, std::string> macro_map_t;
 	macro_map_t g_DefineMap{};
+
+	struct macroWParams_s
+	{
+		size_t numberOfParams;
+		std::vector<std::string> paramTokensInUse;
+	};
+
+	typedef std::map<std::string, macroWParams_s> macro_with_param_map_t;
+	macro_with_param_map_t g_DefineWithParamMap{};
 
 	void dump_map(const macro_map_t& map);
 	std::vector<std::string> tokenizeString(std::string const& inputString);
@@ -98,19 +108,24 @@ namespace {
 
 	inline void writeMacroToMap(const std::string& macroName, const size_t numberOfParams, std::vector<std::string>& paramTokensInUse)
 	{
+		// std::ostringstream stringStream1;
+		// stringStream1 << numberOfParams;
+
+		// std::string macroValue{stringStream.str()};
+		// for (const std::string& token : paramTokensInUse)
+		// {
+		// 	macroValue += token;
+		// }
+
+		macroWParams_s mwp{numberOfParams, paramTokensInUse};
+
 		std::ostringstream stringStream;
-		stringStream << macroName << "(" << numberOfParams << ")";
-
-		std::string macroValue{};
-		for (const std::string& token : paramTokensInUse)
-		{
-			macroValue += token;
-		}
-
-		g_DefineMap[std::string{stringStream.str()}] = macroValue;
+		stringStream.str("");
+		stringStream << macroName << "(";
+		g_DefineWithParamMap[std::string{stringStream.str()}] = mwp;
 
 		//debug map printout
-		dump_map(g_DefineMap);
+		// dump_map(g_DefineMap);
 	}
 
 	inline void SaveMacroWithParams( std::vector<std::string>& tokens )
@@ -122,7 +137,7 @@ namespace {
 
 		bool readyForNextParam{true};
 
-		for (int i = FIFTH_TOKEN;; ++i)
+		for (int i = TOKEN_AFTER_PARENTHESIS;; ++i)
 		{
 
 			switch(tokens[i][FIRST_CHAR])
@@ -131,23 +146,15 @@ namespace {
 				{
 					try
 					{
+
+						if (parameterNames.size() > 9)
+						{
+							throw std::runtime_error(std::string{"Error : This program doesn't support macros with more than 9 parameters"});
+						}
+
 						std::vector<std::string> paramTokensInUse {ProcessMacroDefinition(tokens.begin() + i + 1, tokens.end(), parameterNames)};
 
 						writeMacroToMap(tokens[MACRO_NAME_LOCATION], parameterNames.size(), paramTokensInUse);
-						// //[todo] @VS: save to map function
-						// std::ostringstream stringStream;
-						// stringStream << tokens[THIRD_TOKEN] << "(" << parameterNames.size() << ")";
-
-						// std::string macroValue{};
-						// for (const std::string& token : paramTokensInUse)
-						// {
-						// 	macroValue += token;
-						// }
-
-						// g_DefineMap[std::string{stringStream.str()}] = macroValue;
-
-						// //debug map printout
-						// dump_map(g_DefineMap);
 
 						return;
 					}
@@ -207,7 +214,6 @@ namespace {
 		if ( tokens[FORTH_TOKEN][FIRST_CHAR] == '(' && tokens.size() > THREE_TOKENS )
 		{
 			SaveMacroWithParams(tokens);
-
 		}
 		else
 		{
@@ -252,6 +258,57 @@ namespace {
 				{
 					*itr = g_DefineMap[*itr];
 					foundMacro = true;
+				}
+				else
+				{
+					if ((*(itr + 1))[FIRST_CHAR] == '(')
+					{
+						std::ostringstream stringStream;
+						stringStream << *itr << '(';
+
+						if ( g_DefineMap.find(stringStream.str()) != g_DefineMap.end() )
+						{
+							std::cout << "Info : found " << stringStream.str();
+
+							std::vector<std::string>::iterator itrP = std::find(++itr, tokens.end(), std::string{')'});
+							std::vector<std::string> macroParams{++itr, itrP };
+
+							std::vector<std::string> localMacroExpansionResult{g_DefineMap[stringStream.str()]};
+
+							std::string param{};
+							int parameterIndex{0};
+							for(std::string& token : macroParams)
+							{
+								if (token[FIRST_CHAR] != ',')
+								{
+									param += token;
+								}
+								else
+								{
+									stringStream.str("");
+									stringStream << "param_" << parameterIndex++;
+
+									//
+									auto localItr = std::find(localMacroExpansionResult.begin(), localMacroExpansionResult.end(), stringStream.str());
+									while(localItr != localMacroExpansionResult.end())
+									{
+										*localItr = param;
+										localItr = std::find(++localItr, localMacroExpansionResult.end(), stringStream.str());
+									}
+
+									param = std::string{""};
+								}
+							}
+
+							std::cout << "Debug :\t\t\tlocal Macro Expansion Result\n";
+							for (auto token : localMacroExpansionResult)
+							{
+								std::cout << "\t\t\t\t" << token << "\n";
+							}
+
+							break;
+						}
+					}
 				}
 			}
 
