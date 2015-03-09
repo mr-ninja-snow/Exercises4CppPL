@@ -45,6 +45,7 @@ namespace {
 		std::cout << "Info : macro syntax is correct, saving macro with parameters..." << "\n";
 
 		std::vector<std::string> parameterNames{};
+		int parameterIndex{0};
 
 		bool readyForNextParam{true};
 
@@ -57,10 +58,13 @@ namespace {
 			{
 			case ')':
 				{
-					//[todo] @VS: replace all params with there def order
-					std::vector<std::string>::const_iterator firstElem = tokens.begin() + i + 1;
-					std::vector<std::string>::const_iterator lastElem = tokens.end();
-					std::vector<std::string> paramTokensInUse{firstElem, lastElem};
+					// @VS: replace all params with there def order
+					std::vector<std::string>::const_iterator firstElemOfDef = tokens.begin() + i + 1;
+					std::vector<std::string>::const_iterator lastElemOfDef = tokens.end();
+					std::vector<std::string> paramTokensInUse{firstElemOfDef, lastElemOfDef};
+
+					// //[todo] @VS: find first whitespace and copy from there
+					// std::vector<std::string> macroName{tokens.begin() + 1, firstElemOfDef};
 
 					char paramUsageMask{0};
 
@@ -99,17 +103,34 @@ namespace {
 						std::cout << "\t\t\t\t" << token << "\n";
 					}
 
-					//[todo] @VS: check if all params are used
+					//@VS: check if all params are used
 					for (int i = 0; i < parameterNames.size(); ++i)
 					{
 						if ( !(paramUsageMask & (1 << i)) )
 						{
 							std::cout << "Error : Syntax error in macro definition! Not all of the parameters are used in the definition.\n";
+							return;
 						}
 					}
 
 					//[todo] @VS: save to map function
-					
+
+					//vstepano create inline helper function
+					std::ostringstream stringStream;
+					stringStream << tokens[THIRD_TOKEN] << "(" << parameterNames.size() << ")";
+
+					std::string macroValue{};
+					for (const std::string& token : paramTokensInUse)
+					{
+						macroValue += token;
+					}
+
+					g_DefineMap[std::string{stringStream.str()}] = macroValue;
+
+					//debug map printout
+					dump_map(g_DefineMap);
+
+
 					return;
 				}
 			case ',':
@@ -142,6 +163,12 @@ namespace {
 				std::cout << "Debug : Save " << tokens[i] << "\n";
 
 				parameterNames.push_back(tokens[i]);
+
+				std::ostringstream stringStream;
+				stringStream << "param_" << parameterIndex++;
+				
+				tokens[i] = std::string{stringStream.str()};
+
 				readyForNextParam = false;
 				// std::cout << "Info :" << readyForNextParam << "\n";
 				continue;
