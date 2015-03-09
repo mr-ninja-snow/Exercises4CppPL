@@ -37,23 +37,12 @@ OBSOLETE
 
 int main(int argc, char* argv[])
 {
-	/*regular input
-	std::string line;
-
-	do
-	{
-		std::cout << ">";
-		getline(std::cin, line);
-
-		MacroProcessor::ProcessInput(line);
-	}
-	while (std::cin);*/
-
 	std::string line;
 	std::ifstream infile("input.txt");
 
 	while (std::getline(infile, line))
 	{
+		std::cout << "Info : input \n\n" << line << "\n\n";
 		MacroProcessor::ProcessInput(line);
 
 		std::cin.ignore();
