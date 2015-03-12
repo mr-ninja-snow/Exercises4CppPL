@@ -7,16 +7,17 @@ namespace {
 
 	int countSubstring(const std::string& str, const std::string& sub);
 
-	const unsigned char CountNumberOfDirectives(const std::string& str)
+	const std::vector<std::string> GetOrderOfDirectives(const std::string& str)
 	{
 
-		unsigned char directiveCount{0};
+		std::vector<std::string> directiveOrder{0};
 
 		for(const std::string directive : VSError::SupportedFormatDirevtives)
 		{
 			std::cout << "Debug : " << directive << "\n";
 
-			directiveCount += countSubstring(str, directive);
+			// vstepano rework
+			// directiveCount += countSubstring(str, directive);
 		}
 
 		return directiveCount;
@@ -53,17 +54,16 @@ namespace VSError {
 		va_list args;
 		va_start (args, msgWithFormat);
 
-		const unsigned char numberOfArgs{ CountNumberOfDirectives(msgWithFormat) };
+		const std::vector<std::string> irectiveOrder{ GetOrderOfDirectives(msgWithFormat) };
+		const unsigned char numberOfArgs{irectiveOrder.size()};
 
 		std::cout << "Debug : numberOfArgs - " << int( numberOfArgs ) << "\n";
 
-		// int sum = 0;
-
-		// for (int i=0; i < numArgs; i++)
-		// {
-		// 	int num = va_arg (args,int); // get next argument
-		// 	sum += num;
-		// }
+		for (int i=0; i < numberOfArgs; i++)
+		{
+			int num = va_arg (args,int); // get next argument
+			sum += num;
+		}
 
 		va_end (args);
 		
