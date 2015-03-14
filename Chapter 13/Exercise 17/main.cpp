@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 	while (std::getline(infile, line))
 	{
 		std::cout << "Info : input \n\n" << line << "\n\n";
-		VSError::vsError(line);
+		VSError::vsError(line, 333);
 
 		std::cin.ignore();
 	}

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <algorithm>      // std::find
 #include <utility>      // std::pair
+#include <sstream>
+
 
 namespace {
 
@@ -12,27 +14,19 @@ namespace {
 
 	const std::vector<std::pair<const std::string, size_t>> GetOrderOfDirectives(const std::string& str)
 	{
-
-		// std::vector<std::string> directiveOrder{0};
 		std::vector<directiveStrOffsets_t> directivesAndOffsets{};
 		size_t directiveCount{0};
 
 		for(const std::string directive : VSError::SupportedFormatDirevtives)
 		{
-			// std::cout << "Debug : " << directive << "\n";
-
 			std::vector<size_t> offsets{ getSubStrOffsets( str, directive ) };
 			directivesAndOffsets.push_back( directiveStrOffsets_t{ directive, offsets } );
 			directiveCount += offsets.size();
-
-			// vstepano rework
-			// directiveCount += getSubStrOffsets(str, directive);
 		}
 
 		// vstepano almost similar names
 		for( auto directiveOffsets : directivesAndOffsets)
 		{
-			// std::cout << "Debug : \n\tdirective - " << directiveOffsets.first << "\n";
 			for( auto offset : directiveOffsets.second)
 			{
 				std::cout << "\t\t\t" << offset << "\n";
@@ -47,12 +41,10 @@ namespace {
 			size_t dMinIndex{0};
 			size_t dIndex{0};
 
-			// std::cout << "Debug : 1" << ", " << minOffset << ", " << dMinIndex << ", " << dIndex << "\n";
 			for( auto directiveOffsets : directivesAndOffsets )
 			{
 				if ( directiveOffsets.second.size() )
 				{
-					// std::cout << "Debug :  minOffset " << minOffset << " > directiveOffsets.second[0] " << directiveOffsets.second[0] << "\n";
 					if ( minOffset > directiveOffsets.second[0] )
 					{
 						dMinIndex = dIndex;
@@ -62,20 +54,10 @@ namespace {
 
 				dIndex++;
 			}
-			// std::cout << "Debug : 2" << ", " << minOffset << ", " << dMinIndex << ", " << dIndex << "; directiveOffsets.second.size() - "<< directivesAndOffsets[dMinIndex].second.size()<< "\n";
 
 			directiveOrderWithOffset.push_back( std::pair<const std::string, size_t>{ directivesAndOffsets[dMinIndex].first, directivesAndOffsets[dMinIndex].second[0]} );
-
-			// std::cout << "Debug : 2,2\n";
-			// std::vector<size_t> tmp { directivesAndOffsets[dMinIndex].second };
-			// std::cout << "Debug : 2,3\n";
-			// tmp.erase( tmp.begin() + 1);
-			// std::cout << "Debug : 2,4\n";
-			// directivesAndOffsets[dMinIndex].second = tmp;
-
 			directivesAndOffsets[dMinIndex].second.erase( directivesAndOffsets[dMinIndex].second.begin());
 
-			// std::cout << "Debug : 3" << ", " << minOffset << ", " << dMinIndex << ", " << dIndex << "; directiveOffsets.second.size() - "<< directivesAndOffsets[dMinIndex].second.size()<< "\n";
 		}
 
 		for( auto directiveOffset : directiveOrderWithOffset)
@@ -97,13 +79,11 @@ namespace {
 			return std::vector<size_t>{};
 		}
 
-		// int count = 0;
 		std::vector<size_t> offsetsOfSubStr{};
 		for (size_t offset = str.find(sub);
 			offset != std::string::npos;
 			offset = str.find(sub, offset + sub.length()))
 		{
-			// ++count;
 			offsetsOfSubStr.push_back(offset);
 		}
 
@@ -145,47 +125,69 @@ namespace VSError {
 
 	std::string vsError(const std::string msgWithFormat, ...)
 	{
-		va_list args;
-		va_start (args, msgWithFormat);
 
 		const std::vector<std::pair<const std::string, size_t>> directiveOrder{ GetOrderOfDirectives(msgWithFormat) };
 		const unsigned char numberOfArgs{ static_cast<unsigned char>( directiveOrder.size() ) };
 
 		std::cout << "Debug : numberOfArgs - " << int( numberOfArgs ) << "\n";
 
-		std::string resultingString{};
-		for (int i=0; i < numberOfArgs; i++)
+		if (numberOfArgs)
 		{
-			// int num = va_arg(args,int); // get next argument
+			va_list args;
+			va_start (args, msgWithFormat);
 
-			// std::cout << "Debug : " << directiveOrder[i].first << "\n";
-			switch( GetDirectiveType( directiveOrder[i].first ) )
+			std::string::const_iterator currentStrItrBegin{ msgWithFormat.begin() };
+			std::string::const_iterator currentStrItrEnd{};
+			std::ostringstream resultingStringStream;
+
+			for (int i=0; i < numberOfArgs; i++)
 			{
-			case INT_DIRECTIVE:
-			{
-				std::cout << " %d ";
-				break;
-			}
-			case STRING_DIRECTIVE:
-			{
-				std::cout << " %s ";
-				break;
-			}
-			case CHAR_DIRECTIVE:
-			{
-				std::cout << " %c ";
-				break;
-			}
-			case UNKNOW_DIRECTIVE:
-			{
-				std::cout << " UNKNOW_DIRECTIVE ";
-				break;
-			}
+				switch( GetDirectiveType( directiveOrder[i].first ) )
+				{
+				case INT_DIRECTIVE:
+				{
+					std::cout << " %d ";
+
+					currentStrItrEnd = currentStrItrBegin + directiveOrder[i].second;
+					resultingStringStream << std::string{ currentStrItrBegin, currentStrItrEnd } << va_arg( args, int );
+					currentStrItrBegin = currentStrItrEnd + 2;
+
+					break;
+				}
+				case STRING_DIRECTIVE:
+				{
+					std::cout << " %s ";
+
+					currentStrItrEnd = currentStrItrBegin + directiveOrder[i].second;
+					resultingStringStream << std::string{ currentStrItrBegin, currentStrItrEnd } << va_arg( args, const char* );
+					currentStrItrBegin = currentStrItrEnd + 2;
+
+					break;
+				}
+				case CHAR_DIRECTIVE:
+				{
+					std::cout << " %c ";
+					
+					currentStrItrEnd = currentStrItrBegin + directiveOrder[i].second;
+					resultingStringStream << std::string{ currentStrItrBegin, currentStrItrEnd } << char( va_arg( args, int ) );
+					currentStrItrBegin = currentStrItrEnd + 2;
+
+					break;
+				}
+				case UNKNOW_DIRECTIVE:
+				{
+					std::cout << " UNKNOW_DIRECTIVE ";
+					break;
+				}
+				}
+
 			}
 
+			resultingStringStream << std::string{ currentStrItrBegin, msgWithFormat.end() };
+			std::cout << "Debug : resultingString - " << resultingStringStream.str() << "\n";
+
+			va_end (args);
 		}
-
-		va_end (args);
 		
 		return std::string{"foo"};
 	}
