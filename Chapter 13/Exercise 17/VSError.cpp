@@ -19,7 +19,7 @@ namespace {
 
 		for(const std::string directive : VSError::SupportedFormatDirevtives)
 		{
-			std::cout << "Debug : " << directive << "\n";
+			// std::cout << "Debug : " << directive << "\n";
 
 			std::vector<size_t> offsets{ getSubStrOffsets( str, directive ) };
 			directivesAndOffsets.push_back( directiveStrOffsets_t{ directive, offsets } );
@@ -32,7 +32,7 @@ namespace {
 		// vstepano almost similar names
 		for( auto directiveOffsets : directivesAndOffsets)
 		{
-			std::cout << "Debug : \n\tdirective - " << directiveOffsets.first << "\n";
+			// std::cout << "Debug : \n\tdirective - " << directiveOffsets.first << "\n";
 			for( auto offset : directiveOffsets.second)
 			{
 				std::cout << "\t\t\t" << offset << "\n";
@@ -43,15 +43,16 @@ namespace {
 
 		for (int i = 0; i < directiveCount; ++i)
 		{
-			size_t minOffset{0};
+			size_t minOffset{ static_cast<unsigned int>( -1) };
 			size_t dMinIndex{0};
 			size_t dIndex{0};
 
-			std::cout << "Debug : 1" << ", " << minOffset << ", " << dMinIndex << ", " << dIndex << "\n";
+			// std::cout << "Debug : 1" << ", " << minOffset << ", " << dMinIndex << ", " << dIndex << "\n";
 			for( auto directiveOffsets : directivesAndOffsets )
 			{
 				if ( directiveOffsets.second.size() )
 				{
+					// std::cout << "Debug :  minOffset " << minOffset << " > directiveOffsets.second[0] " << directiveOffsets.second[0] << "\n";
 					if ( minOffset > directiveOffsets.second[0] )
 					{
 						dMinIndex = dIndex;
@@ -61,20 +62,20 @@ namespace {
 
 				dIndex++;
 			}
-			std::cout << "Debug : 2" << ", " << minOffset << ", " << dMinIndex << ", " << dIndex << "; directiveOffsets.second.size() - "<< directivesAndOffsets[dMinIndex].second.size()<< "\n";
+			// std::cout << "Debug : 2" << ", " << minOffset << ", " << dMinIndex << ", " << dIndex << "; directiveOffsets.second.size() - "<< directivesAndOffsets[dMinIndex].second.size()<< "\n";
 
 			directiveOrderWithOffset.push_back( std::pair<const std::string, size_t>{ directivesAndOffsets[dMinIndex].first, directivesAndOffsets[dMinIndex].second[0]} );
 
-			std::cout << "Debug : 2,2\n";
-			std::vector<size_t> tmp { directivesAndOffsets[dMinIndex].second };
-			std::cout << "Debug : 2,3\n";
-			tmp.erase( tmp.begin() + 1);
-			std::cout << "Debug : 2,4\n";
-			directivesAndOffsets[dMinIndex].second = tmp;
+			// std::cout << "Debug : 2,2\n";
+			// std::vector<size_t> tmp { directivesAndOffsets[dMinIndex].second };
+			// std::cout << "Debug : 2,3\n";
+			// tmp.erase( tmp.begin() + 1);
+			// std::cout << "Debug : 2,4\n";
+			// directivesAndOffsets[dMinIndex].second = tmp;
 
-			// directivesAndOffsets[dMinIndex].second.erase( directivesAndOffsets[dMinIndex].second.begin() + 1);
+			directivesAndOffsets[dMinIndex].second.erase( directivesAndOffsets[dMinIndex].second.begin());
 
-			std::cout << "Debug : 3" << ", " << minOffset << ", " << dMinIndex << ", " << dIndex << "; directiveOffsets.second.size() - "<< directivesAndOffsets[dMinIndex].second.size()<< "\n";
+			// std::cout << "Debug : 3" << ", " << minOffset << ", " << dMinIndex << ", " << dIndex << "; directiveOffsets.second.size() - "<< directivesAndOffsets[dMinIndex].second.size()<< "\n";
 		}
 
 		for( auto directiveOffset : directiveOrderWithOffset)
@@ -109,6 +110,35 @@ namespace {
 		return offsetsOfSubStr;
 	}
 
+	enum directiveType_e
+	{
+		STRING_DIRECTIVE,
+		CHAR_DIRECTIVE,
+		INT_DIRECTIVE,
+		UNKNOW_DIRECTIVE
+	};
+
+	directiveType_e GetDirectiveType( const std::string& directive )
+	{
+
+		if ( directive == std::string{ "%d" } )
+		{
+			return INT_DIRECTIVE;
+		}
+
+		if ( directive == std::string{ "%s" } )
+		{
+			return STRING_DIRECTIVE;
+		}
+
+		if ( directive == std::string{ "%c" } )
+		{
+			return CHAR_DIRECTIVE;
+		}
+
+		return UNKNOW_DIRECTIVE;
+	}
+
 }
 
 namespace VSError {
@@ -118,16 +148,42 @@ namespace VSError {
 		va_list args;
 		va_start (args, msgWithFormat);
 
-		const std::vector<std::pair<const std::string, size_t>> irectiveOrder{ GetOrderOfDirectives(msgWithFormat) };
-		const unsigned char numberOfArgs{ static_cast<unsigned char>( irectiveOrder.size() ) };
+		const std::vector<std::pair<const std::string, size_t>> directiveOrder{ GetOrderOfDirectives(msgWithFormat) };
+		const unsigned char numberOfArgs{ static_cast<unsigned char>( directiveOrder.size() ) };
 
 		std::cout << "Debug : numberOfArgs - " << int( numberOfArgs ) << "\n";
 
-		// for (int i=0; i < numberOfArgs; i++)
-		// {
-		// 	int num = va_arg (args,int); // get next argument
-		// 	sum += num;
-		// }
+		std::string resultingString{};
+		for (int i=0; i < numberOfArgs; i++)
+		{
+			// int num = va_arg(args,int); // get next argument
+
+			// std::cout << "Debug : " << directiveOrder[i].first << "\n";
+			switch( GetDirectiveType( directiveOrder[i].first ) )
+			{
+			case INT_DIRECTIVE:
+			{
+				std::cout << " %d ";
+				break;
+			}
+			case STRING_DIRECTIVE:
+			{
+				std::cout << " %s ";
+				break;
+			}
+			case CHAR_DIRECTIVE:
+			{
+				std::cout << " %c ";
+				break;
+			}
+			case UNKNOW_DIRECTIVE:
+			{
+				std::cout << " UNKNOW_DIRECTIVE ";
+				break;
+			}
+			}
+
+		}
 
 		va_end (args);
 		
