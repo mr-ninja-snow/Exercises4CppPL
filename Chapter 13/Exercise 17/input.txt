@@ -1,1 +1,1 @@
-This is %d test 123
+This %d is %c test %s  

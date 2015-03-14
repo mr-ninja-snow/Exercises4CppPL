@@ -90,6 +90,10 @@ namespace {
 		return offsetsOfSubStr;
 	}
 
+	enum {
+		SIZE_OF_DIRECTIVE = 2
+	};
+
 	enum directiveType_e
 	{
 		STRING_DIRECTIVE,
@@ -139,39 +143,27 @@ namespace VSError {
 			std::string::const_iterator currentStrItrBegin{ msgWithFormat.begin() };
 			std::string::const_iterator currentStrItrEnd{};
 			std::ostringstream resultingStringStream;
+			size_t privOffset{0};
 
 			for (int i=0; i < numberOfArgs; i++)
 			{
+				currentStrItrEnd = currentStrItrBegin + (directiveOrder[i].second - privOffset); //vstepano this shold be a delta!!!!!!!!!!!!!1
+
 				switch( GetDirectiveType( directiveOrder[i].first ) )
 				{
 				case INT_DIRECTIVE:
 				{
-					std::cout << " %d ";
-
-					currentStrItrEnd = currentStrItrBegin + directiveOrder[i].second;
 					resultingStringStream << std::string{ currentStrItrBegin, currentStrItrEnd } << va_arg( args, int );
-					currentStrItrBegin = currentStrItrEnd + 2;
-
 					break;
 				}
 				case STRING_DIRECTIVE:
 				{
-					std::cout << " %s ";
-
-					currentStrItrEnd = currentStrItrBegin + directiveOrder[i].second;
-					resultingStringStream << std::string{ currentStrItrBegin, currentStrItrEnd } << va_arg( args, const char* );
-					currentStrItrBegin = currentStrItrEnd + 2;
-
+					resultingStringStream << std::string{ currentStrItrBegin, currentStrItrEnd } << std::string{ va_arg( args, const char* ) };
 					break;
 				}
 				case CHAR_DIRECTIVE:
 				{
-					std::cout << " %c ";
-					
-					currentStrItrEnd = currentStrItrBegin + directiveOrder[i].second;
 					resultingStringStream << std::string{ currentStrItrBegin, currentStrItrEnd } << char( va_arg( args, int ) );
-					currentStrItrBegin = currentStrItrEnd + 2;
-
 					break;
 				}
 				case UNKNOW_DIRECTIVE:
@@ -181,12 +173,15 @@ namespace VSError {
 				}
 				}
 
+				currentStrItrBegin = currentStrItrEnd + SIZE_OF_DIRECTIVE;
+				privOffset = directiveOrder[i].second + SIZE_OF_DIRECTIVE;
 			}
 
 			resultingStringStream << std::string{ currentStrItrBegin, msgWithFormat.end() };
-			std::cout << "Debug : resultingString - " << resultingStringStream.str() << "\n";
 
 			va_end (args);
+
+			return resultingStringStream.str();
 		}
 		
 		return std::string{"foo"};
