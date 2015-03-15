@@ -15,15 +15,15 @@ namespace VSDate {
 
 	struct date_s
 	{
-		unsigned short day{1};
-		unsigned short month{1};
-		unsigned short year{1970};
+		unsigned short day;
+		unsigned short month;
+		unsigned short year;
 	};
+
 
 	bool validDate( date_s& date );
 
-	// date_s operator+();
-	void addDays( date_s& date );
+	void addDay( date_s& date );
 	void addMonth( date_s& date );
 	void addYear( date_s& date );
 

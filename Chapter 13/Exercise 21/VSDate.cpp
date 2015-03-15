@@ -6,12 +6,6 @@ namespace {
 
 	bool isLeapYear(short year)
 	{
-		// if (year is not divisible by 4) then (it is a common year)
-		// else
-		// if (year is not divisible by 100) then (it is a leap year)
-		// else
-		// if (year is not divisible by 400) then (it is a common year)
-		// else (it is a leap year)
 
 		if ( year % 4 )
 		{
@@ -35,9 +29,10 @@ namespace {
 				}
 			}
 		}
-	}
-}
 
+	}
+
+}
 
 namespace VSDate {
 
@@ -77,7 +72,7 @@ namespace VSDate {
 		{
 			if ( date.day + 1 > numberOfDaysInMonth[date.month - 1] )
 			{
-				date.day++;
+				date.day = 1;
 				addMonth( date );
 			}
 			else
@@ -87,7 +82,7 @@ namespace VSDate {
 		}
 		else
 		{
-			std::cout << "Error: Could add a day, passed date parameter  was a invalid date\n";
+			std::cout << "Error: Could add a day, passed date parameter was a invalid date\n";
 		}
 	}
 
@@ -97,7 +92,7 @@ namespace VSDate {
 		{
 			if ( date.month + 1 > NUMBER_OF_MONTHS )
 			{
-				date.month++;
+				date.month = 1;
 				addYear( date );
 			}
 			else
@@ -107,11 +102,11 @@ namespace VSDate {
 		}
 		else
 		{
-			std::cout << "Error: Could add a month, passed date parameter  was a invalid date\n";
+			std::cout << "Error: Could add a month, passed date parameter was a invalid date\n";
 		}
 	}
 
-	void addYear(date_s& date )
+	void addYear( date_s& date )
 	{
 		if ( validDate( date ) )
 		{
@@ -119,7 +114,7 @@ namespace VSDate {
 		}
 		else
 		{
-			std::cout << "Error: Could add a month, passed date parameter  was a invalid date\n";
+			std::cout << "Error: Could add a month, passed date parameter was a invalid date\n";
 		}
 	}
 
