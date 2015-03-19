@@ -4,7 +4,8 @@
 #include <iostream>
 #include <vector>
 
-namespace VSDate {
+namespace VSDate
+{
 
 	enum
 	{
@@ -19,6 +20,34 @@ namespace VSDate {
 		unsigned short month;
 		unsigned short year;
 	};
+
+	namespace WeekDayCalc
+	{
+		const std::vector<short> monthTable{ 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
+
+		enum eLeepYearMonthTable
+		{
+			JAN = 6,
+			FEB = 2
+		};
+
+		enum eWeekDays
+		{
+			SUN,
+			MON,
+			TUS,
+			WEN,
+			THR,
+			FRI,
+			SAT
+		};
+
+		short getCenturyNumber(const short& year);
+
+		eWeekDays calculateWeekDay(const date_s& date);
+
+	}
+
 
 
 	bool validDate( date_s& date );

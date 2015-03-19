@@ -118,6 +118,43 @@ namespace VSDate {
 		}
 	}
 
+	short WeekDayCalc::getCenturyNumber(const short& year)
+	{
+		switch( ( year / 100 ) % 4 )
+		{
+		case 0:
+		{
+			return 6;
+		}
+		case 1:
+		{
+			return 4;
+		}
+		case 2:
+		{
+			return 2;
+		}
+		case 3:
+		{
+			return 0;
+		}
+		}
+	}
+
+	WeekDayCalc::eWeekDays WeekDayCalc::calculateWeekDay(const date_s& d)
+	{
+		const short cLastTwoDigitsOfYear = d.year % 100;
+		const short cCenturyNumber = getCenturyNumber( d.year );
+
+		if ( isLeapYear( d.year ) && (( d.month == 1 ) || ( d.month == 2 )) )
+		{
+			return static_cast<WeekDayCalc::eWeekDays>(( d.day + ( d.month == 1 ? JAN : FEB ) + cLastTwoDigitsOfYear + ( (int) cLastTwoDigitsOfYear / 4 ) + cCenturyNumber ) % 7 );
+		}
+		else
+		{
+			return static_cast<WeekDayCalc::eWeekDays>(( d.day + monthTable[d.month-1] + cLastTwoDigitsOfYear + ( (int) cLastTwoDigitsOfYear / 4 ) + cCenturyNumber ) % 7 );
+		}
+	}
 
 	std::ostream& operator<<(std::ostream& out, date_s& date)
 	{
