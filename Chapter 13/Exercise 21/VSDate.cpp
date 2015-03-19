@@ -141,7 +141,7 @@ namespace VSDate {
 		}
 	}
 
-	WeekDayCalc::eWeekDays WeekDayCalc::calculateWeekDay(const date_s& d)
+	WeekDayCalc::eWeekDays WeekDayCalc::calculateWeekDay( const date_s& d )
 	{
 		const short cLastTwoDigitsOfYear = d.year % 100;
 		const short cCenturyNumber = getCenturyNumber( d.year );
@@ -154,6 +154,28 @@ namespace VSDate {
 		{
 			return static_cast<WeekDayCalc::eWeekDays>(( d.day + monthTable[d.month-1] + cLastTwoDigitsOfYear + ( (int) cLastTwoDigitsOfYear / 4 ) + cCenturyNumber ) % 7 );
 		}
+	}
+
+	date_s WeekDayCalc::getNextModaysDate( const date_s& date )
+	{
+		date_s resDate = date;
+		eWeekDays currentWeekDay = calculateWeekDay( date );
+
+		if ( currentWeekDay == SUN )
+		{
+			addDay( resDate );
+			return resDate;
+		}
+		else
+		{
+			for (int i = 0; i < ( int(SAT) - int(currentWeekDay) + 2 ); ++i)
+			{
+				addDay( resDate );
+			}
+			return resDate;
+		}
+
+		return date_s{};
 	}
 
 	std::ostream& operator<<(std::ostream& out, date_s& date)

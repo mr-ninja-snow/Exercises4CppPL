@@ -27,9 +27,11 @@ int main(int argc, char* argv[])
 	std::cout << "\n-----------------------------\n";
 
 	std::cout << "\n-----------------------------\n";
-	VSDate::date_s dateT = { 11, 9, 2001 };
+	VSDate::date_s dateT = { 29, 12, 2014 };
 	std::cout << dateT;
 	std::cout << " is week day #" << VSDate::WeekDayCalc::calculateWeekDay(dateT);
+	VSDate::date_s dateT2 = VSDate::WeekDayCalc::getNextModaysDate(dateT);
+	std::cout << "\n next monday will be on the \n" << dateT2;
 	std::cout << "\n-----------------------------\n";
 
 	return 0;

@@ -46,6 +46,8 @@ namespace VSDate
 
 		eWeekDays calculateWeekDay(const date_s& date);
 
+		date_s getNextModaysDate(const date_s& date);
+
 	}
 
 
