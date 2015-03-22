@@ -1,13 +1,51 @@
 #include "VSBTree.hpp"
 
 #include <iostream>
+#include <string.h>
+#include <stdexcept>
 
 namespace
 {
-	// inline void TraceFunction(const char* msg)
-	// {
-	// 	std::cout << __FILE__ << '|' << __FUNCTION__ << '|' <<__LINE__ << " " << msg << "\n";
-	// }
+	const VSBTree::BinTreeNode* lookUpWordInTree(VSBTree::BinTreeNode& node, const char* word)
+	{
+		if ( std::strcmp(word, node.word) == 0 )
+		{
+			return &node;
+		}
+
+		if ( node.rightNode )
+		{
+			if ( const VSBTree::BinTreeNode* resNode = lookUpWordInTree(*node.rightNode, word) )
+			{
+				return resNode;
+			}
+		}
+
+		if ( node.leftNode )
+		{
+			if ( const VSBTree::BinTreeNode* resNode = lookUpWordInTree(*node.leftNode, word) )
+			{
+				return resNode;
+			}
+		}
+
+		return nullptr;
+	}
+
+	int getBinTreeNodeCount(const VSBTree::BinTreeNode& tree, int nodeCount = 0)
+	{
+		if (tree.rightNode != nullptr)
+		{
+			nodeCount = getBinTreeNodeCount(*(tree.rightNode), ++nodeCount);
+		}
+
+		if (tree.leftNode != nullptr)
+		{
+			nodeCount = getBinTreeNodeCount(*(tree.leftNode), ++nodeCount);
+		}
+
+		return nodeCount;
+	}
 }
 
 
@@ -42,20 +80,18 @@ namespace VSBTree
 		}
 	}
 
-	// int getBinTreeNodeCount(const BinTreeNode& tree, int nodeCount)
-	// {
-	// 	if (tree.rightNode != nullptr)
-	// 	{
-	// 		nodeCount = getBinTreeNodeCount(*(tree.rightNode), ++nodeCount);
-	// 	}
+	const BinTreeNode* find(BinTreeNode& node, const char* word)
+	{
+		if (const BinTreeNode* n = lookUpWordInTree(node, word))
+		{
+			return n;
+		}
+		else
+		{
+			throw std::runtime_error{ "Word not found" };
+		}
 
-	// 	if (tree.leftNode != nullptr)
-	// 	{
-	// 		nodeCount = getBinTreeNodeCount(*(tree.leftNode), ++nodeCount);
-	// 	}
-
-	// 	return nodeCount;
-	// }
+	}
 
 	// // BinTreeNode* createAndFillInNode(const char const* word)
 	// // {

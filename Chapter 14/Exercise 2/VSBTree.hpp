@@ -45,6 +45,9 @@ namespace VSBTree
 	};
 
 	void addNodeToTree(BinTreeNode& node, const char* word);
+
+	const BinTreeNode* find(BinTreeNode& node, const char* word);
+
 	// // BinTreeNode* createAndFillInBinTreeNode(const char word[]);
 	// int getBinTreeNodeCount(const BinTreeNode& tree, int nodeCount = 0);
 	// int getBinTreeNodeTreeDepthInLevels(const BinTreeNode& tree, const int currnetLevel = 0);
