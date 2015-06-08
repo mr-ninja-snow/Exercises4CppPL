@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Clean up all of the Makefile.in in the current directory and in the sub directories
+find . -name "Makefile.in" -type f -delete
+
+# Clean up cache and all of the Autotools's produced files
+rm -rf missing config.guess config.sub ltmain.sh config.h.in compile aclocal.m4 autom4te.cache test-driver configure depcomp install-sh
+
+# Reconfiguration steps for Autotools
+#1
+autoheader
+
+#2
+#-f, --force         replace existing files
+#-c, --copy          copy files rather than symlinking them
+libtoolize -f -c
+
+#3
+aclocal
+
+#4
+autoconf
+
+#5
+#-a, --add-missing      add missing standard files to package
+#-c, --copy             with -a, copy missing files (default is symlink)
+#--no-force           only update Makefile.in's that are out of date
+automake -a -c --no-force
+
